@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - School Management System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-user-graduate fa-2x"></i>
+            <h3>Student Portal</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" class="active" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showClasses()"><i class="fas fa-book"></i> <span>My Classes</span></a></li>
+                <li><a href="#" onclick="showAssignments()"><i class="fas fa-tasks"></i> <span>Assignments</span></a></li>
+                <li><a href="#" onclick="showGrades()"><i class="fas fa-chart-line"></i> <span>Grades</span></a></li>
+                <li><a href="#" onclick="showAnnouncements()"><i class="fas fa-bullhorn"></i> <span>Announcements</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <!-- Header -->
+            <div class="header">
+                <h1>Student Dashboard</h1>
+                <div class="user-profile" onclick="showProfile()">
+                    <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=4cc9f0&color=fff" alt="Student User">
+                    <div class="user-info">
+                        <h4>Sarah Johnson</h4>
+                        <p>Grade 10 Student</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="classes-count">0</h3>
+                            <p>Classes</p>
+                        </div>
+                        <div class="card-icon classes">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="assignments-count">0</h3>
+                            <p>Pending Assignments</p>
+                        </div>
+                        <div class="card-icon assignments">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="grades-count">0.0</h3>
+                            <p>GPA</p>
+                        </div>
+                        <div class="card-icon grades">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="announcements-count">0</h3>
+                            <p>New Announcements</p>
+                        </div>
+                        <div class="card-icon announcements-card">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <div class="section-header">
+                    <h2>Recent Activity</h2>
+                    <a href="#">View All</a>
+                </div>
+                <ul class="activity-list" id="activity-list">
+                    <!-- Dynamically populated by script.js -->
+                </ul>
+            </div>
+
+            <!-- Upcoming Classes -->
+            <div class="upcoming-classes">
+                <div class="section-header">
+                    <h2>Today's Schedule</h2>
+                    <a href="#">View Full Schedule</a>
+                </div>
+                <div id="today-schedule">
+                    <!-- Dynamically populated by script.js -->
+                </div>
+            </div>
+
+            <!-- Pending Assignments -->
+            <div class="assignments-section">
+                <div class="section-header">
+                    <h2>Pending Assignments</h2>
+                    <a href="#">View All</a>
+                </div>
+                <div id="pending-assignments">
+                    <!-- Dynamically populated by script.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Classes Section -->
+        <div id="classes-section" style="display: none;">
+            <div class="header">
+                <h1>My Classes</h1>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Teacher</th>
+                        <th>Schedule</th>
+                        <th>Room</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="classes-table-body">
+                    <!-- Dynamically populated by script.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Assignments Section -->
+        <div id="assignments-section" style="display: none;">
+            <div class="header">
+                <h1>My Assignments</h1>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Class</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="assignments-table-body">
+                    <!-- Dynamically populated by script.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Grades Section -->
+        <div id="grades-section" style="display: none;">
+            <div class="header">
+                <h1>My Grades</h1>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Class</th>
+                        <th>Teacher</th>
+                        <th>Current Grade</th>
+                        <th>Progress</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="grades-table-body">
+                    <!-- Dynamically populated by script.js -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Announcements Section -->
+        <div id="announcements-section" style="display: none;">
+            <div class="header">
+                <h1>Announcements</h1>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date</th>
+                        <th>From</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="announcements-table-body">
+                    <!-- Dynamically populated by script.js -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Assignment View Modal -->
+    <div id="assignment-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="assignment-modal-title">Assignment Details</h2>
+                <button class="close-btn" onclick="closeModal('assignment-modal')">&times;</button>
+            </div>
+            <div id="assignment-details">
+                <div class="form-group">
+                    <label>Title:</label>
+                    <p id="assignment-view-title"></p>
+                </div>
+                <div class="form-group">
+                    <label>Class:</label>
+                    <p id="assignment-view-class"></p>
+                </div>
+                <div class="form-group">
+                    <label>Due Date:</label>
+                    <p id="assignment-view-due"></p>
+                </div>
+                <div class="form-group">
+                    <label>Description:</label>
+                    <p id="assignment-view-description"></p>
+                </div>
+                <div class="form-group" id="assignment-submission-group">
+                    <label for="assignment-submission">Your Submission:</label>
+                    <textarea id="assignment-submission" placeholder="Type your submission here or attach files"></textarea>
+                    <input type="file" id="assignment-file" style="margin-top: 10px;">
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="closeModal('assignment-modal')">Close</button>
+                <button type="button" class="btn submit-btn" id="assignment-submit-btn" onclick="submitAssignment()">Submit Assignment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Announcement View Modal -->
+    <div id="announcement-view-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="announcement-view-title">Announcement Title</h2>
+                <button class="close-btn" onclick="closeModal('announcement-view-modal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>From:</label>
+                <p id="announcement-view-from"></p>
+            </div>
+            <div class="form-group">
+                <label>Date:</label>
+                <p id="announcement-view-date"></p>
+            </div>
+            <div class="form-group">
+                <label>Content:</label>
+                <p id="announcement-view-content"></p>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="closeModal('announcement-view-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grades View Modal -->
+    <div id="grades-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="grades-modal-title">Grade Details</h2>
+                <button class="close-btn" onclick="closeModal('grades-modal')">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Class:</label>
+                <p id="grades-view-class"></p>
+            </div>
+            <div class="form-group">
+                <label>Teacher:</label>
+                <p id="grades-view-teacher"></p>
+            </div>
+            <div class="form-group">
+                <label>Current Grade:</label>
+                <p id="grades-view-grade"></p>
+            </div>
+            <div class="form-group">
+                <label>Assignments:</label>
+                <table id="grade-details-table" style="width: 100%; margin-top: 10px;">
+                    <thead>
+                        <tr>
+                            <th>Assignment</th>
+                            <th>Grade</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="closeModal('grades-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Content Loaded Event
+document.addEventListener('DOMContentLoaded', function() {
+    // Load initial dashboard data
+    loadDashboardData();
+    
+    // Set up event listeners for navigation
+    setupNavigation();
+});
+
+// Global variables
+let currentStudent = {
+    id: 1,
+    name: "Sarah Johnson",
+    grade: "Grade 10"
+};
+
+// Navigation Functions
+function setupNavigation() {
+    // Highlight active menu item on click
+    const menuItems = document.querySelectorAll('.sidebar-menu a');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
+            menuItems.forEach(i => i.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+}
+
+function showDashboard() {
+    hideAllSections();
+    document.getElementById('dashboard-section').style.display = 'block';
+    loadDashboardData();
+}
+
+function showClasses() {
+    hideAllSections();
+    document.getElementById('classes-section').style.display = 'block';
+    loadClassesData();
+}
+
+function showAssignments() {
+    hideAllSections();
+    document.getElementById('assignments-section').style.display = 'block';
+    loadAssignmentsData();
+}
+
+function showGrades() {
+    hideAllSections();
+    document.getElementById('grades-section').style.display = 'block';
+    loadGradesData();
+}
+
+function showAnnouncements() {
+    hideAllSections();
+    document.getElementById('announcements-section').style.display = 'block';
+    loadAnnouncementsData();
+}
+
+function hideAllSections() {
+    const sections = document.querySelectorAll('.main-content > div');
+    sections.forEach(section => {
+        section.style.display = 'none';
+    });
+}
+
+// Data Loading Functions
+async function loadDashboardData() {
+    try {
+        // Load counts
+        const countsResponse = await fetch('/api/dashboard/counts');
+        const counts = await countsResponse.json();
+        
+        document.getElementById('classes-count').textContent = counts.classes || 0;
+        document.getElementById('assignments-count').textContent = counts.assignments || 0;
+        document.getElementById('grades-count').textContent = counts.gpa || 'N/A';
+        document.getElementById('announcements-count').textContent = counts.announcements || 0;
+        
+        // Load recent activities
+        const activitiesResponse = await fetch('/api/activities');
+        const activities = await activitiesResponse.json();
+        populateActivities(activities);
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showError('Failed to load dashboard data');
+    }
+}
+
+async function loadClassesData() {
+    try {
+        const response = await fetch('/api/classes');
+        const classes = await response.json();
+        populateClassesTable(classes);
+    } catch (error) {
+        console.error('Error loading classes data:', error);
+        showError('Failed to load classes data');
+    }
+}
+
+async function loadAssignmentsData() {
+    try {
+        const response = await fetch('/api/assignments');
+        const assignments = await response.json();
+        populateAssignmentsTable(assignments);
+    } catch (error) {
+        console.error('Error loading assignments data:', error);
+        showError('Failed to load assignments data');
+    }
+}
+
+async function loadGradesData() {
+    try {
+        const response = await fetch('/api/grades');
+        const grades = await response.json();
+        populateGradesTable(grades);
+    } catch (error) {
+        console.error('Error loading grades data:', error);
+        showError('Failed to load grades data');
+    }
+}
+
+async function loadAnnouncementsData() {
+    try {
+        const response = await fetch('/api/announcements');
+        const announcements = await response.json();
+        populateAnnouncementsTable(announcements);
+    } catch (error) {
+        console.error('Error loading announcements data:', error);
+        showError('Failed to load announcements data');
+    }
+}
+
+// Data Population Functions
+function populateActivities(activities) {
+    const activityList = document.getElementById('activity-list');
+    activityList.innerHTML = '';
+    
+    activities.slice(0, 3).forEach(activity => {
+        const activityItem = document.createElement('li');
+        activityItem.className = 'activity-item';
+        
+        activityItem.innerHTML = `
+            <div class="activity-icon">
+                <i class="fas ${getActivityIcon(activity.type)}"></i>
+            </div>
+            <div class="activity-info">
+                <h4>${activity.title}</h4>
+                <p>${activity.description}</p>
+            </div>
+            <div class="activity-time">${formatTime(activity.created_at)}</div>
+        `;
+        
+        activityList.appendChild(activityItem);
+    });
+}
+
+function populateClassesTable(classes) {
+    const tbody = document.getElementById('classes-table-body');
+    tbody.innerHTML = '';
+    
+    classes.forEach(cls => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${cls.name}</td>
+            <td>${cls.teacher}</td>
+            <td>${cls.schedule}</td>
+            <td>${cls.room}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewClass(${cls.id})">View</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateAssignmentsTable(assignments) {
+    const tbody = document.getElementById('assignments-table-body');
+    tbody.innerHTML = '';
+    
+    assignments.forEach(assignment => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${assignment.title}</td>
+            <td>${assignment.class}</td>
+            <td>${assignment.due_date}</td>
+            <td>${assignment.status}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewAssignment(${assignment.id})">View</button>
+                ${assignment.status !== 'Submitted' ? 
+                    `<button class="action-btn submit-btn" onclick="submitAssignment(${assignment.id})">Submit</button>` : ''}
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateGradesTable(grades) {
+    const tbody = document.getElementById('grades-table-body');
+    tbody.innerHTML = '';
+    
+    grades.forEach(grade => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${grade.class}</td>
+            <td>${grade.teacher}</td>
+            <td>${grade.grade}</td>
+            <td>
+                <div style="background-color: #f0f0f0; border-radius: 10px; height: 10px; width: 100%;">
+                    <div style="background-color: #4bb543; border-radius: 10px; height: 10px; width: ${grade.progress}%;"></div>
+                </div>
+            </td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewGrades(${grade.id})">Details</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function populateAnnouncementsTable(announcements) {
+    const tbody = document.getElementById('announcements-table-body');
+    tbody.innerHTML = '';
+    
+    announcements.forEach(announcement => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${announcement.title}</td>
+            <td>${announcement.date}</td>
+            <td>${announcement.from}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewAnnouncement(${announcement.id})">View</button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// View Detail Functions
+function viewClass(classId) {
+    // In a real app, you would fetch the specific class details
+    console.log('Viewing class with ID:', classId);
+    alert(`Viewing class details for ID: ${classId}`);
+}
+
+function viewAssignment(assignmentId) {
+    fetch(`/api/assignments/${assignmentId}`)
+        .then(response => response.json())
+        .then(assignment => {
+            document.getElementById('assignment-modal-title').textContent = assignment.title;
+            document.getElementById('assignment-view-title').textContent = assignment.title;
+            document.getElementById('assignment-view-class').textContent = assignment.class;
+            document.getElementById('assignment-view-due').textContent = assignment.due_date;
+            document.getElementById('assignment-view-description').textContent = assignment.description;
+            
+            // Show submit button only if not already submitted
+            const submitBtn = document.getElementById('assignment-submit-btn');
+            submitBtn.style.display = assignment.status === 'Submitted' ? 'none' : 'block';
+            
+            openModal('assignment-modal');
+        })
+        .catch(error => {
+            console.error('Error loading assignment:', error);
+            showError('Failed to load assignment details');
+        });
+}
+
+function viewAnnouncement(announcementId) {
+    fetch(`/api/announcements/${announcementId}`)
+        .then(response => response.json())
+        .then(announcement => {
+            document.getElementById('announcement-view-title').textContent = announcement.title;
+            document.getElementById('announcement-view-from').textContent = announcement.from;
+            document.getElementById('announcement-view-date').textContent = announcement.date;
+            document.getElementById('announcement-view-content').textContent = announcement.content;
+            
+            openModal('announcement-view-modal');
+        })
+        .catch(error => {
+            console.error('Error loading announcement:', error);
+            showError('Failed to load announcement details');
+        });
+}
+
+function viewGrades(gradeId) {
+    fetch(`/api/grades/${gradeId}`)
+        .then(response => response.json())
+        .then(grade => {
+            document.getElementById('grades-modal-title').textContent = `${grade.class} Grades`;
+            document.getElementById('grades-view-class').textContent = grade.class;
+            document.getElementById('grades-view-teacher').textContent = grade.teacher;
+            document.getElementById('grades-view-grade').textContent = grade.current_grade;
+            
+            // Populate assignments table (simplified example)
+            // In a real app, you would have separate API endpoint for grade details
+            openModal('grades-modal');
+        })
+        .catch(error => {
+            console.error('Error loading grade details:', error);
+            showError('Failed to load grade details');
+        });
+}
+
+// Submission Functions
+function submitAssignment(assignmentId) {
+    const submission = document.getElementById('assignment-submission').value;
+    const fileInput = document.getElementById('assignment-file');
+    
+    if (!submission && fileInput.files.length === 0) {
+        showError('Please provide a submission or upload a file');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('submission', submission);
+    if (fileInput.files[0]) {
+        formData.append('file', fileInput.files[0]);
+    }
+    
+    fetch(`/api/assignments/${assignmentId}/submit`, {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        showSuccess('Assignment submitted successfully!');
+        closeModal('assignment-modal');
+        loadAssignmentsData();
+        loadDashboardData(); // Refresh counts
+    })
+    .catch(error => {
+        console.error('Error submitting assignment:', error);
+        showError('Failed to submit assignment');
+    });
+}
+
+// Modal Functions
+function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
+
+// Utility Functions
+function getActivityIcon(activityType) {
+    const icons = {
+        'assignment': 'fa-tasks',
+        'grade': 'fa-chart-line',
+        'announcement': 'fa-bullhorn',
+        'default': 'fa-check-circle'
+    };
+    return icons[activityType] || icons.default;
+}
+
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays/7)} weeks ago`;
+    return date.toLocaleDateString();
+}
+
+function showError(message) {
+    // In a real app, you'd have a more sophisticated error display
+    alert(`Error: ${message}`);
+}
+
+function showSuccess(message) {
+    // In a real app, you'd have a more sophisticated success display
+    alert(`Success: ${message}`);
+}
+
+// Initialize profile display
+function showProfile() {
+    document.querySelector('.user-info h4').textContent = currentStudent.name;
+    document.querySelector('.user-info p').textContent = currentStudent.grade;
+}
+    </script><script src="script.js"></script>
+</body>
+</html>
