@@ -499,703 +499,396 @@
     </div>
     
     <script>
-        // Global variables
-    let currentTeacher = {
-        id: 1,
-        name: "John Doe",
-        subject: "Mathematics"
-    };
-    
-    // DOM Content Loaded Event
-    document.addEventListener('DOMContentLoaded', function() {
-        // Load initial dashboard data
-        loadDashboardData();
-        
-        // Set up form submissions
-        setupFormHandlers();
-        
-        // Set up event listeners for navigation
-        setupNavigation();
-        
-        // Initialize profile display
-        showProfile();
-    });
-    
-    // Navigation Functions
-    function setupNavigation() {
-        // Highlight active menu item on click
-        const menuItems = document.querySelectorAll('.sidebar-menu a');
-        menuItems.forEach(item => {
-            item.addEventListener('click', function() {
-                menuItems.forEach(i => i.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
-    }
-    
-    function showDashboard() {
-        hideAllSections();
-        document.getElementById('dashboard-section').style.display = 'block';
-        loadDashboardData();
-    }
-    
-    function showClasses() {
-        hideAllSections();
-        document.getElementById('classes-section').style.display = 'block';
-        loadClassesData();
-    }
-    
-    function showAssignments() {
-        hideAllSections();
-        document.getElementById('assignments-section').style.display = 'block';
-        loadAssignmentsData();
-    }
-    
-    function showStudents() {
-        hideAllSections();
-        document.getElementById('students-section').style.display = 'block';
-        loadStudentsData();
-    }
-    
-    function showAnnouncements() {
-        hideAllSections();
-        document.getElementById('announcements-section').style.display = 'block';
-        loadAnnouncementsData();
-    }
-    
-    function hideAllSections() {
-        const sections = document.querySelectorAll('.main-content > div');
-        sections.forEach(section => {
-            section.style.display = 'none';
-        });
-    }
-    
-    // Data Loading Functions
-    async function loadDashboardData() {
-        try {
-            // Load counts
-            const countsResponse = await fetch(`/api/tdashboard/counts?teacherId=${currentTeacher.id}`);
-            const counts = await countsResponse.json();
-            
-            document.getElementById('students-count').textContent = counts.students || 0;
-            document.getElementById('classes-count').textContent = counts.classes || 0;
-            document.getElementById('assignments-count').textContent = counts.assignments || 0;
-            document.getElementById('announcements-count').textContent = counts.announcements || 0;
-            
-            // Load recent activities
-            const activitiesResponse = await fetch(`/api/tactivities?teacherId=${currentTeacher.id}`);
-            const activities = await activitiesResponse.json();
-            populateActivities(activities);
-            
-            // Load today's classes
-            const classesResponse = await fetch(`/api/tclasses/today?teacherId=${currentTeacher.id}`);
-            const classes = await classesResponse.json();
-            populateTodayClasses(classes);
-            
-        } catch (error) {
-            console.error('Error loading dashboard data:', error);
-            showError('Failed to load dashboard data');
-        }
-    }
-    
-    async function loadClassesData() {
-        try {
-            const response = await fetch(`/api/tclasses?teacherId=${currentTeacher.id}`);
-            const classes = await response.json();
-            populateClassesTable(classes);
-        } catch (error) {
-            console.error('Error loading classes data:', error);
-            showError('Failed to load classes data');
-        }
-    }
-    
-    async function loadAssignmentsData() {
-        try {
-            const response = await fetch(`/api/tassignments?teacherId=${currentTeacher.id}`);
-            const assignments = await response.json();
-            populateAssignmentsTable(assignments);
-        } catch (error) {
-            console.error('Error loading assignments data:', error);
-            showError('Failed to load assignments data');
-        }
-    }
-    
-    async function loadStudentsData() {
-        try {
-            // Get the teacher's classes first
-            const classesResponse = await fetch(`/api/tclasses?teacherId=${currentTeacher.id}`);
-            const classes = await classesResponse.json();
-            
-            // Get students for each class
-            let allStudents = [];
-            for (const cls of classes) {
-                const studentsResponse = await fetch(`/api/sclasses/${cls.id}/students`);
-                const students = await studentsResponse.json();
-                students.forEach(s => {
-                    s.class_name = cls.name; // Add class name to each student
-                });
-                allStudents = [...allStudents, ...students];
-            }
-            
-            populateStudentsTable(allStudents);
-        } catch (error) {
-            console.error('Error loading students data:', error);
-            showError('Failed to load students data');
-        }
-    }
-    
-    async function loadAnnouncementsData() {
-        try {
-            const response = await fetch(`/api/announcements?userId=${currentTeacher.id}&userType=teacher`);
-            const announcements = await response.json();
-            populateAnnouncementsTable(announcements);
-        } catch (error) {
-            console.error('Error loading announcements data:', error);
-            showError('Failed to load announcements data');
-        }
-    }
-    
-    // Data Population Functions
-    function populateActivities(activities) {
-        const activityList = document.getElementById('activity-list');
-        activityList.innerHTML = '';
-        
-        activities.slice(0, 3).forEach(activity => {
-            const activityItem = document.createElement('li');
-            activityItem.className = 'activity-item';
-            
-            activityItem.innerHTML = `
-                <div class="activity-icon">
-                    <i class="fas ${getActivityIcon(activity.action)}"></i>
-                </div>
-                <div class="activity-info">
-                    <h4>${activity.action}</h4>
-                    <p>${activity.details}</p>
-                </div>
-                <div class="activity-time">${formatTime(activity.created_at)}</div>
-            `;
-            
-            activityList.appendChild(activityItem);
-        });
-    }
-    
-    function populateTodayClasses(classes) {
-        const todaySchedule = document.querySelector('#dashboard-section .classes-section');
-        todaySchedule.innerHTML = `
-            <div class="section-header">
-                <h2>Today's Classes</h2>
-                <a href="#" onclick="showClasses(); return false;">View All</a>
-            </div>
-        `;
-        
-        if (classes.length === 0) {
-            todaySchedule.innerHTML += '<p>No classes scheduled for today</p>';
-            return;
-        }
-        
-        classes.forEach(cls => {
-            const classItem = document.createElement('div');
-            classItem.className = 'class-item';
-            classItem.innerHTML = `
-                <div class="class-header">
-                    <div class="class-title">${cls.name}</div>
-                    <div class="class-time">${cls.schedule}</div>
-                </div>
-                <div class="class-content">
-                    Students: ${cls.student_count || 0} | Room: ${cls.room_number || 'Not specified'}
-                </div>
-            `;
-            todaySchedule.appendChild(classItem);
-        });
-    }
-    
-    function populateClassesTable(classes) {
-        const tbody = document.getElementById('classes-table-body');
-        tbody.innerHTML = '';
-        
-        classes.forEach(cls => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${cls.id}</td>
-                <td>${cls.name}</td>
-                <td>${cls.grade_level}</td>
-                <td>${cls.schedule || 'Not scheduled'}</td>
-                <td>${cls.room_number || 'Not assigned'}</td>
-                <td>${cls.student_count || 0}</td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewClass(${cls.id})">View</button>
-                    <button class="action-btn edit-btn" onclick="editClass(${cls.id})">Edit</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-    
-    function populateAssignmentsTable(assignments) {
-        const tbody = document.getElementById('assignments-table-body');
-        tbody.innerHTML = '';
-        
-        assignments.forEach(assignment => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${assignment.id}</td>
-                <td>${assignment.title}</td>
-                <td>${assignment.class_name}</td>
-                <td>${new Date(assignment.due_date).toLocaleDateString()}</td>
-                <td>${assignment.status}</td>
-                <td>${assignment.submissions || 0}/${assignment.graded || 0}</td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewAssignment(${assignment.id})">View</button>
-                    <button class="action-btn edit-btn" onclick="editAssignment(${assignment.id})">Edit</button>
-                    <button class="action-btn delete-btn" onclick="deleteAssignment(${assignment.id})">Delete</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-    
-    function populateStudentsTable(students) {
-        const tbody = document.getElementById('students-table-body');
-        tbody.innerHTML = '';
-        
-        if (students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center">No students found in your classes</td></tr>';
-            return;
-        }
-        
-        students.forEach(student => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${student.id}</td>
-                <td>${student.name}</td>
-                <td>${student.class_name}</td>
-                <td>${student.grade || 'N/A'}</td>
-                <td>${student.email}</td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewStudent(${student.id})">View</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-    
-    function populateAnnouncementsTable(announcements) {
-        const tbody = document.getElementById('announcements-table-body');
-        tbody.innerHTML = '';
-        
-        announcements.forEach(announcement => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${announcement.id}</td>
-                <td>${announcement.title}</td>
-                <td>${new Date(announcement.created_at).toLocaleDateString()}</td>
-                <td>${announcement.class_name || 'All Classes'}</td>
-                <td>${announcement.author_name}</td>
-                <td>
-                    <button class="action-btn view-btn" onclick="viewAnnouncement(${announcement.id})">View</button>
-                    ${announcement.author_id === currentTeacher.id ? 
-                        `<button class="action-btn edit-btn" onclick="editAnnouncement(${announcement.id})">Edit</button>
-                         <button class="action-btn delete-btn" onclick="deleteAnnouncement(${announcement.id})">Delete</button>` 
-                        : ''}
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-    
-    // Form Handlers
-    function setupFormHandlers() {
-        // Class form
-        document.getElementById('class-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = {
-                id: document.getElementById('class-id').value || null,
-                name: document.getElementById('class-name').value,
-                grade_level: document.getElementById('class-grade').value,
-                schedule: document.getElementById('class-schedule').value,
-                room_number: document.getElementById('class-room').value,
-                teacher_id: currentTeacher.id
-            };
-            
-            try {
-                const url = formData.id ? '/api/tclasses' : '/api/tclasses';
-                const method = formData.id ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    showSuccess(`Class ${formData.id ? 'updated' : 'added'} successfully!`);
-                    closeModal('class-modal');
-                    loadClassesData();
-                    loadDashboardData();
-                } else {
-                    throw new Error(await response.text());
-                }
-            } catch (error) {
-                console.error('Error saving class:', error);
-                showError(`Failed to save class: ${error.message}`);
-            }
-        });
-        
-        // Assignment form
-        document.getElementById('assignment-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const formData = {
-                id: document.getElementById('assignment-id').value || null,
-                title: document.getElementById('assignment-title').value,
-                class_id: document.getElementById('assignment-class').value,
-                due_date: document.getElementById('assignment-due').value,
-                description: document.getElementById('assignment-description').value,
-                teacher_id: currentTeacher.id
-            };
-            
-            try {
-                const url = formData.id ? '/api/tassignments' : '/api/tassignments';
-                const method = formData.id ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                if (response.ok) {
-                    showSuccess(`Assignment ${formData.id ? 'updated' : 'added'} successfully!`);
-                    closeModal('assignment-modal');
-                    loadAssignmentsData();
-                    loadDashboardData();
-                } else {
-                    throw new Error(await response.text());
-                }
-            } catch (error) {
-                console.error('Error saving assignment:', error);
-                showError(`Failed to save assignment: ${error.message}`);
-            }
-        });
-        
-        // Announcement form
-        document.getElementById('announcement-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const classId = document.getElementById('announcement-class').value;
-            const formData = {
-                id: document.getElementById('announcement-id').value || null,
-                title: document.getElementById('announcement-title').value,
-                content: document.getElementById('announcement-content').value,
-                target_audience: classId === '0' ? 'all' : 'specific_class',
-                class_id: classId === '0' ? null : classId,
-                author_id: currentTeacher.id
-            };
-            
-            try {
-                const url = formData.id ? '/api/announcements' : '/api/announcements';
-                const method = formData.id ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
-                
-                if (response.ok) {
-                    showSuccess(`Announcement ${formData.id ? 'updated' : 'added'} successfully!`);
-                    closeModal('announcement-modal');
-                    loadAnnouncementsData();
-                    loadDashboardData();
-                } else {
-                    throw new Error(await response.text());
-                }
-            } catch (error) {
-                console.error('Error saving announcement:', error);
-                showError(`Failed to save announcement: ${error.message}`);
-            }
-        });
-    }
-    
-    // Modal Functions
-    function showAddClassModal() {
-        document.getElementById('class-modal-title').textContent = 'Add New Class';
-        document.getElementById('class-form').reset();
-        document.getElementById('class-id').value = '';
-        document.getElementById('class-teacher').value = currentTeacher.name;
-        openModal('class-modal');
-    }
-    
-    function showAddAssignmentModal() {
-        // Load classes for dropdown
-        fetch(`/api/tclasses?teacherId=${currentTeacher.id}`)
-            .then(response => response.json())
-            .then(classes => {
-                const classSelect = document.getElementById('assignment-class');
-                classSelect.innerHTML = classes.map(cls => 
-                    `<option value="${cls.id}">${cls.name} (${cls.grade_level})</option>`
-                ).join('');
-                
-                document.getElementById('assignment-modal-title').textContent = 'Add New Assignment';
-                document.getElementById('assignment-form').reset();
-                document.getElementById('assignment-id').value = '';
-                document.getElementById('assignment-due').valueAsDate = new Date();
-                openModal('assignment-modal');
-            })
-            .catch(error => {
-                console.error('Error loading classes:', error);
-                showError('Failed to load classes for assignment');
-            });
-    }
-    
-    function showAddAnnouncementModal() {
-        // Load classes for dropdown
-        fetch(`/api/tclasses?teacherId=${currentTeacher.id}`)
-            .then(response => response.json())
-            .then(classes => {
-                const classSelect = document.getElementById('announcement-class');
-                classSelect.innerHTML = `
-                    <option value="0">All Classes</option>
-                    ${classes.map(cls => 
-                        `<option value="${cls.id}">${cls.name}</option>`
-                    ).join('')}
-                `;
-                
-                document.getElementById('announcement-modal-title').textContent = 'Add New Announcement';
-                document.getElementById('announcement-form').reset();
-                document.getElementById('announcement-id').value = '';
-                document.getElementById('announcement-date').valueAsDate = new Date();
-                openModal('announcement-modal');
-            })
-            .catch(error => {
-                console.error('Error loading classes:', error);
-                showError('Failed to load classes for announcement');
-            });
-    }
-    
-    function editClass(classId) {
-        fetch(`/api/tclasses/${classId}`)
-            .then(response => response.json())
-            .then(cls => {
-                document.getElementById('class-modal-title').textContent = 'Edit Class';
-                document.getElementById('class-id').value = cls.id;
-                document.getElementById('class-name').value = cls.name;
-                document.getElementById('class-grade').value = cls.grade_level;
-                document.getElementById('class-schedule').value = cls.schedule;
-                document.getElementById('class-room').value = cls.room_number;
-                document.getElementById('class-teacher').value = cls.teacher_name || currentTeacher.name;
-                openModal('class-modal');
-            })
-            .catch(error => {
-                console.error('Error loading class:', error);
-                showError('Failed to load class details');
-            });
-    }
-    
-    function editAssignment(assignmentId) {
-        fetch(`/api/tassignments/${assignmentId}`)
-            .then(response => response.json())
-            .then(assignment => {
-                document.getElementById('assignment-modal-title').textContent = 'Edit Assignment';
-                document.getElementById('assignment-id').value = assignment.id;
-                document.getElementById('assignment-title').value = assignment.title;
-                document.getElementById('assignment-class').value = assignment.class_id;
-                document.getElementById('assignment-due').value = assignment.due_date.split('T')[0];
-                document.getElementById('assignment-description').value = assignment.description;
-                openModal('assignment-modal');
-            })
-            .catch(error => {
-                console.error('Error loading assignment:', error);
-                showError('Failed to load assignment details');
-            });
-    }
-    
-    function editAnnouncement(announcementId) {
-        fetch(`/api/announcements/${announcementId}`)
-            .then(response => response.json())
-            .then(announcement => {
-                document.getElementById('announcement-modal-title').textContent = 'Edit Announcement';
-                document.getElementById('announcement-id').value = announcement.id;
-                document.getElementById('announcement-title').value = announcement.title;
-                document.getElementById('announcement-class').value = announcement.class_id || 0;
-                document.getElementById('announcement-date').value = announcement.created_at.split('T')[0];
-                document.getElementById('announcement-content').value = announcement.content;
-                openModal('announcement-modal');
-            })
-            .catch(error => {
-                console.error('Error loading announcement:', error);
-                showError('Failed to load announcement details');
-            });
-    }
-    
-    function viewClass(classId) {
-        fetch(`/api/tclasses/${classId}`)
-            .then(response => response.json())
-            .then(cls => {
-                alert(`Viewing Class: ${cls.name}\nGrade: ${cls.grade_level}\nSchedule: ${cls.schedule}\nRoom: ${cls.room_number}\nTeacher: ${cls.teacher_name}\nStudents: ${cls.student_count}`);
-            })
-            .catch(error => {
-                console.error('Error loading class:', error);
-                showError('Failed to load class details');
-            });
-    }
-    
-    function viewAssignment(assignmentId) {
-        fetch(`/api/tassignments/${assignmentId}`)
-            .then(response => response.json())
-            .then(assignment => {
-                alert(`Viewing Assignment: ${assignment.title}\nClass: ${assignment.class_name}\nDue: ${new Date(assignment.due_date).toLocaleDateString()}\nStatus: ${assignment.status}\n\nDescription: ${assignment.description}`);
-            })
-            .catch(error => {
-                console.error('Error loading assignment:', error);
-                showError('Failed to load assignment details');
-            });
-    }
-    
-    function viewStudent(studentId) {
-        fetch(`/api/students/${studentId}`)
-            .then(response => response.json())
-            .then(student => {
-                alert(`Viewing Student:\nName: ${student.name}\nEmail: ${student.email}\nGrade: ${student.grade || 'N/A'}\nParent Contact: ${student.parent_contact || 'N/A'}`);
-            })
-            .catch(error => {
-                console.error('Error loading student:', error);
-                showError('Failed to load student details');
-            });
-    }
-    
-    function viewAnnouncement(announcementId) {
-        fetch(`/api/announcements/${announcementId}`)
-            .then(response => response.json())
-            .then(announcement => {
-                alert(`Viewing Announcement:\nTitle: ${announcement.title}\nDate: ${new Date(announcement.created_at).toLocaleDateString()}\nAuthor: ${announcement.author_name}\nFor: ${announcement.class_name || 'All Classes'}\n\nContent:\n${announcement.content}`);
-            })
-            .catch(error => {
-                console.error('Error loading announcement:', error);
-                showError('Failed to load announcement details');
-            });
-    }
-    
-    function deleteAssignment(assignmentId) {
-        if (confirm('Are you sure you want to delete this assignment?')) {
-            fetch(`/api/tassignments/${assignmentId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    showSuccess('Assignment deleted successfully!');
-                    loadAssignmentsData();
-                    loadDashboardData();
-                } else {
-                    throw new Error('Failed to delete assignment');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting assignment:', error);
-                showError('Failed to delete assignment');
-            });
-        }
-    }
-    
-    function deleteAnnouncement(announcementId) {
-        if (confirm('Are you sure you want to delete this announcement?')) {
-            fetch(`/api/announcements/${announcementId}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (response.ok) {
-                    showSuccess('Announcement deleted successfully!');
-                    loadAnnouncementsData();
-                    loadDashboardData();
-                } else {
-                    throw new Error('Failed to delete announcement');
-                }
-            })
-            .catch(error => {
-                console.error('Error deleting announcement:', error);
-                showError('Failed to delete announcement');
-            });
-        }
-    }
-    
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = 'flex';
-    }
-    
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = 'none';
-    }
-    
-    // Utility Functions
-    function getActivityIcon(action) {
-        const icons = {
-            'New Assignment': 'fa-tasks',
-            'Assignment Graded': 'fa-check-circle',
-            'New Announcement': 'fa-bullhorn',
-            'Class Updated': 'fa-chalkboard-teacher',
-            'default': 'fa-info-circle'
+        // API Configuration
+        const API_BASE_URL = '/api';
+        const TEACHER_ID = 1; // In a real app, this would come from authentication
+
+        // DOM Elements
+        const elements = {
+            dashboardSection: document.getElementById('dashboard-section'),
+            classesSection: document.getElementById('classes-section'),
+            assignmentsSection: document.getElementById('assignments-section'),
+            studentsSection: document.getElementById('students-section'),
+            announcementsSection: document.getElementById('announcements-section'),
+            // Add other DOM elements as needed
         };
-        return icons[action] || icons.default;
-    }
-    
-    function formatTime(dateString) {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
-        
-        if (diffDays === 0) return 'Today';
-        if (diffDays === 1) return 'Yesterday';
-        if (diffDays < 7) return `${diffDays} days ago`;
-        if (diffDays < 30) return `${Math.floor(diffDays/7)} weeks ago`;
-        return date.toLocaleDateString();
-    }
-    
-    function showError(message) {
-        // Create a more user-friendly error display
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.innerHTML = `
-            <div class="error-content">
-                <span class="close-error" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                <strong>Error:</strong> ${message}
-            </div>
-        `;
-        document.body.appendChild(errorDiv);
-        
-        // Remove after 5 seconds
-        setTimeout(() => {
-            errorDiv.remove();
-        }, 5000);
-    }
-    
-    function showSuccess(message) {
-        // Create a more user-friendly success display
-        const successDiv = document.createElement('div');
-        successDiv.className = 'success-message';
-        successDiv.innerHTML = `
-            <div class="success-content">
-                <span class="close-success" onclick="this.parentElement.parentElement.remove()">&times;</span>
-                <strong>Success:</strong> ${message}
-            </div>
-        `;
-        document.body.appendChild(successDiv);
-        
-        // Remove after 5 seconds
-        setTimeout(() => {
-            successDiv.remove();
-        }, 5000);
-    }
-    
-    // Initialize profile display
-    function showProfile() {
-        document.querySelector('.user-info h4').textContent = currentTeacher.name;
-        document.querySelector('.user-info p').textContent = `${currentTeacher.subject} Teacher`;
-    }
+
+        // Current Teacher Data
+        const currentTeacher = {
+            id: TEACHER_ID,
+            name: "John Doe",
+            subject: "Mathematics"
+        };
+
+        // Utility Functions
+        const utils = {
+            formatDate: (dateString) => {
+                const options = { year: 'numeric', month: 'short', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString(undefined, options);
+            },
+            
+            formatTimeAgo: (dateString) => {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffSeconds = Math.floor((now - date) / 1000);
+                
+                if (diffSeconds < 60) return 'Just now';
+                if (diffSeconds < 3600) return `${Math.floor(diffSeconds/60)} minutes ago`;
+                if (diffSeconds < 86400) return `${Math.floor(diffSeconds/3600)} hours ago`;
+                if (diffSeconds < 604800) return `${Math.floor(diffSeconds/86400)} days ago`;
+                return utils.formatDate(dateString);
+            },
+            
+            showModal: (modalId) => {
+                document.getElementById(modalId).style.display = 'flex';
+            },
+            
+            closeModal: (modalId) => {
+                document.getElementById(modalId).style.display = 'none';
+            },
+            
+            showToast: (message, type = 'success') => {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.innerHTML = `
+                    <div class="toast-content">
+                        <span class="close-toast" onclick="this.parentElement.parentElement.remove()">&times;</span>
+                        ${message}
+                    </div>
+                `;
+                document.body.appendChild(toast);
+                
+                setTimeout(() => toast.remove(), 5000);
+            },
+            
+            handleApiError: (error) => {
+                console.error('API Error:', error);
+                utils.showToast(error.message || 'An error occurred', 'error');
+                throw error;
+            }
+        };
+
+        // API Service
+        const apiService = {
+            get: async (endpoint) => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    utils.handleApiError(error);
+                }
+            },
+            
+            post: async (endpoint, data) => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    utils.handleApiError(error);
+                }
+            },
+            
+            put: async (endpoint, data) => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    utils.handleApiError(error);
+                }
+            },
+            
+            delete: async (endpoint) => {
+                try {
+                    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                        method: 'DELETE'
+                    });
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    return await response.json();
+                } catch (error) {
+                    utils.handleApiError(error);
+                }
+            }
+        };
+
+        // Data Service
+        const dataService = {
+            getDashboardData: async () => {
+                return {
+                    counts: await apiService.get(`/tdashboard/counts?teacherId=${TEACHER_ID}`),
+                    activities: await apiService.get(`/tactivities?teacherId=${TEACHER_ID}`),
+                    classes: await apiService.get(`/tclasses/today?teacherId=${TEACHER_ID}`)
+                };
+            },
+            
+            getClasses: async () => {
+                return await apiService.get(`/tclasses?teacherId=${TEACHER_ID}`);
+            },
+            
+            getClass: async (id) => {
+                return await apiService.get(`/tclasses/${id}`);
+            },
+            
+            saveClass: async (classData) => {
+                const endpoint = classData.id ? `/tclasses/${classData.id}` : '/tclasses';
+                const method = classData.id ? apiService.put : apiService.post;
+                return await method(endpoint, classData);
+            },
+            
+            deleteClass: async (id) => {
+                return await apiService.delete(`/tclasses/${id}`);
+            },
+            
+            getAssignments: async () => {
+                return await apiService.get(`/tassignments?teacherId=${TEACHER_ID}`);
+            },
+            
+            getAssignment: async (id) => {
+                return await apiService.get(`/tassignments/${id}`);
+            },
+            
+            saveAssignment: async (assignmentData) => {
+                const endpoint = assignmentData.id ? `/tassignments/${assignmentData.id}` : '/tassignments';
+                const method = assignmentData.id ? apiService.put : apiService.post;
+                return await method(endpoint, assignmentData);
+            },
+            
+            deleteAssignment: async (id) => {
+                return await apiService.delete(`/tassignments/${id}`);
+            },
+            
+            getStudents: async () => {
+                const classes = await dataService.getClasses();
+                const students = [];
+                
+                for (const cls of classes) {
+                    const classStudents = await apiService.get(`/sclasses/${cls.id}/students`);
+                    students.push(...classStudents.map(s => ({ ...s, class_name: cls.name })));
+                }
+                
+                return students;
+            },
+            
+            getStudent: async (id) => {
+                return await apiService.get(`/students/${id}`);
+            },
+            
+            getAnnouncements: async () => {
+                return await apiService.get(`/announcements?userId=${TEACHER_ID}&userType=teacher`);
+            },
+            
+            getAnnouncement: async (id) => {
+                return await apiService.get(`/announcements/${id}`);
+            },
+            
+            saveAnnouncement: async (announcementData) => {
+                const endpoint = announcementData.id ? `/announcements/${announcementData.id}` : '/announcements';
+                const method = announcementData.id ? apiService.put : apiService.post;
+                return await method(endpoint, announcementData);
+            },
+            
+            deleteAnnouncement: async (id) => {
+                return await apiService.delete(`/announcements/${id}`);
+            }
+        };
+
+        // UI Components
+        const uiComponents = {
+            showDashboard: async () => {
+                try {
+                    // Show loading state
+                    elements.dashboardSection.innerHTML = '<div class="loading">Loading dashboard...</div>';
+                    
+                    // Hide other sections
+                    document.querySelectorAll('.main-content > div').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    elements.dashboardSection.style.display = 'block';
+                    
+                    // Load data
+                    const data = await dataService.getDashboardData();
+                    
+                    // Update counts
+                    document.getElementById('students-count').textContent = data.counts.students || 0;
+                    document.getElementById('classes-count').textContent = data.counts.classes || 0;
+                    document.getElementById('assignments-count').textContent = data.counts.assignments || 0;
+                    document.getElementById('announcements-count').textContent = data.counts.announcements || 0;
+                    
+                    // Update activities
+                    const activityList = document.getElementById('activity-list');
+                    activityList.innerHTML = data.activities.slice(0, 3).map(activity => `
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas ${activity.action.includes('Assignment') ? 'fa-tasks' : 
+                                                activity.action.includes('Announcement') ? 'fa-bullhorn' : 
+                                                'fa-info-circle'}"></i>
+                            </div>
+                            <div class="activity-info">
+                                <h4>${activity.action}</h4>
+                                <p>${activity.details}</p>
+                            </div>
+                            <div class="activity-time">${utils.formatTimeAgo(activity.created_at)}</div>
+                        </li>
+                    `).join('');
+                    
+                    // Update today's classes
+                    const todayClasses = document.querySelector('#dashboard-section .classes-section');
+                    todayClasses.innerHTML = `
+                        <div class="section-header">
+                            <h2>Today's Classes</h2>
+                            <a href="#" onclick="uiComponents.showClasses(); return false;">View All</a>
+                        </div>
+                        ${data.classes.length ? data.classes.map(cls => `
+                            <div class="class-item">
+                                <div class="class-header">
+                                    <div class="class-title">${cls.name}</div>
+                                    <div class="class-time">${cls.schedule}</div>
+                                </div>
+                                <div class="class-content">
+                                    Topic: ${cls.topic || 'Not specified'} | Room: ${cls.room_number || 'Not specified'}
+                                </div>
+                            </div>
+                        `).join('') : '<p>No classes scheduled for today</p>'}
+                    `;
+                    
+                } catch (error) {
+                    console.error('Failed to load dashboard:', error);
+                    elements.dashboardSection.innerHTML = '<div class="error">Failed to load dashboard data</div>';
+                }
+            },
+            
+            showClasses: async () => {
+                try {
+                    // Show loading state
+                    elements.classesSection.innerHTML = '<div class="loading">Loading classes...</div>';
+                    
+                    // Hide other sections
+                    document.querySelectorAll('.main-content > div').forEach(section => {
+                        section.style.display = 'none';
+                    });
+                    elements.classesSection.style.display = 'block';
+                    
+                    // Load data
+                    const classes = await dataService.getClasses();
+                    
+                    // Update table
+                    const tbody = document.getElementById('classes-table-body');
+                    tbody.innerHTML = classes.map(cls => `
+                        <tr>
+                            <td>${cls.id}</td>
+                            <td>${cls.name}</td>
+                            <td>${cls.grade_level}</td>
+                            <td>${cls.schedule || 'Not scheduled'}</td>
+                            <td>${cls.room_number || 'Not assigned'}</td>
+                            <td>${cls.student_count || 0}</td>
+                            <td>
+                                <button class="action-btn view-btn" onclick="uiComponents.viewClass(${cls.id})">View</button>
+                                <button class="action-btn edit-btn" onclick="uiComponents.editClass(${cls.id})">Edit</button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                } catch (error) {
+                    console.error('Failed to load classes:', error);
+                    elements.classesSection.innerHTML = '<div class="error">Failed to load classes data</div>';
+                }
+            },
+            
+            showAddClassModal: () => {
+                document.getElementById('class-modal-title').textContent = 'Add New Class';
+                document.getElementById('class-form').reset();
+                document.getElementById('class-id').value = '';
+                utils.showModal('class-modal');
+            },
+            
+            editClass: async (id) => {
+                try {
+                    const cls = await dataService.getClass(id);
+                    document.getElementById('class-modal-title').textContent = 'Edit Class';
+                    document.getElementById('class-id').value = cls.id;
+                    document.getElementById('class-name').value = cls.name;
+                    document.getElementById('class-grade').value = cls.grade_level;
+                    document.getElementById('class-schedule').value = cls.schedule;
+                    document.getElementById('class-room').value = cls.room_number;
+                    utils.showModal('class-modal');
+                } catch (error) {
+                    console.error('Failed to load class:', error);
+                    utils.showToast('Failed to load class details', 'error');
+                }
+            },
+            
+            viewClass: async (id) => {
+                try {
+                    const cls = await dataService.getClass(id);
+                    alert(`Class: ${cls.name}\nGrade: ${cls.grade_level}\nSchedule: ${cls.schedule}\nRoom: ${cls.room_number}\nStudents: ${cls.student_count || 0}`);
+                } catch (error) {
+                    console.error('Failed to load class:', error);
+                    utils.showToast('Failed to load class details', 'error');
+                }
+            },
+            
+            // Similar methods for assignments, students, announcements...
+            // (Implementation follows the same pattern as classes)
+            
+            // Initialize the application
+            init: () => {
+                // Set up navigation
+                document.querySelectorAll('.sidebar-menu a').forEach(item => {
+                    item.addEventListener('click', function() {
+                        document.querySelectorAll('.sidebar-menu a').forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                    });
+                });
+                
+                // Set up form submissions
+                document.getElementById('class-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const formData = {
+                        id: document.getElementById('class-id').value || null,
+                        name: document.getElementById('class-name').value,
+                        grade_level: document.getElementById('class-grade').value,
+                        schedule: document.getElementById('class-schedule').value,
+                        room_number: document.getElementById('class-room').value,
+                        teacher_id: TEACHER_ID
+                    };
+                    
+                    try {
+                        await dataService.saveClass(formData);
+                        utils.showToast(`Class ${formData.id ? 'updated' : 'added'} successfully!`);
+                        utils.closeModal('class-modal');
+                        uiComponents.showClasses();
+                        uiComponents.showDashboard();
+                    } catch (error) {
+                        console.error('Failed to save class:', error);
+                        utils.showToast(`Failed to save class: ${error.message}`, 'error');
+                    }
+                });
+                
+                // Set up other form submissions similarly...
+                
+                // Initialize profile
+                document.querySelector('.user-info h4').textContent = currentTeacher.name;
+                document.querySelector('.user-info p').textContent = `${currentTeacher.subject} Teacher`;
+                
+                // Load initial view
+                uiComponents.showDashboard();
+            }
+        };
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            uiComponents.init();
+        });
     </script>
     
     </body>

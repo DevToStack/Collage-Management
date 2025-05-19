@@ -336,7 +336,7 @@ a:hover {
 }
 
 /* Enhanced Recent Activity Section */
-.recent-activity .id-card-preview{
+.recent-activity {
     background-color: white;
     border-radius: var(--border-radius);
     padding: 1.5rem;
