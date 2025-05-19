@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transport Management - College System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+/* Container for active routes and vehicle status */
+.active-routes, .vehicle-status {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Buttons */
+.btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+/* Additional button style for add button */
+.btn-add {
+  background-color: #28a745;
+}
+
+.btn-add:hover {
+  background-color: #1e7e34;
+}
+
+/* Route cards container */
+.route-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Example route card style - you can customize further */
+.route-card {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  flex: 1 1 200px; /* Responsive card width */
+  min-width: 200px;
+  color: #333;
+}
+
+/* Data table styling */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.data-table thead {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.data-table th, .data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Actions column buttons - you can add buttons here */
+.action-btn {
+  background-color: #ffc107;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #333;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #e0a800;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .route-cards {
+    flex-direction: column;
+  }
+}
+
+/* Add more as needed */
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-bus fa-2x"></i>
+            <h3>Transport System</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showRoutes()"><i class="fas fa-route"></i> <span>Routes & Stops</span></a></li>
+                <li><a href="#" onclick="showVehicles()"><i class="fas fa-bus-alt"></i> <span>Vehicles</span></a></li>
+                <li><a href="#" onclick="showDrivers()"><i class="fas fa-user-tie"></i> <span>Drivers</span></a></li>
+                <li><a href="#" onclick="showPassengers()"><i class="fas fa-users"></i> <span>Passengers</span></a></li>
+                <li><a href="#" onclick="showTransportFees()"><i class="fas fa-money-bill-wave"></i> <span>Transport Fees</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="header">
+                <h1>Transport Management</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Transport+Officer&background=20c997&color=fff" alt="Transport Officer">
+                    <div class="user-info">
+                        <h4>Transport Officer</h4>
+                        <p>College Transport</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="active-routes">0</h3>
+                            <p>Active Routes</p>
+                        </div>
+                        <div class="card-icon routes">
+                            <i class="fas fa-route"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="route-coverage">0 km coverage</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="active-vehicles">0</h3>
+                            <p>Active Vehicles</p>
+                        </div>
+                        <div class="card-icon vehicles">
+                            <i class="fas fa-bus"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="vehicles-available">0 available</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="registered-passengers">0</h3>
+                            <p>Registered Passengers</p>
+                        </div>
+                        <div class="card-icon passengers">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="daily-riders">0 daily riders</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="unpaid-transport-fees">0</h3>
+                            <p>Unpaid Fees</p>
+                        </div>
+                        <div class="card-icon fees">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="total-transport-due">₹0 due</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Routes -->
+            <div class="active-routes">
+                <div class="section-header">
+                    <h2>Active Routes Today</h2>
+                    <button class="btn" onclick="showRouteMap()">View Route Map</button>
+                </div>
+                <div class="route-cards" id="route-cards">
+                    <!-- Route cards will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Vehicle Status -->
+            <div class="vehicle-status">
+                <div class="section-header">
+                    <h2>Vehicle Status</h2>
+                    <button class="btn btn-add" onclick="showAddVehicleModal()">Add Vehicle</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Vehicle No.</th>
+                            <th>Type</th>
+                            <th>Route</th>
+                            <th>Driver</th>
+                            <th>Status</th>
+                            <th>Last Maintenance</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vehicle-table">
+                        <!-- Vehicles will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Other sections would go here -->
+    </div>
+
+    <!-- Route Details Modal -->
+    <div id="route-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Route Details</h2>
+                <button class="close-btn" onclick="closeModal('route-modal')">&times;</button>
+            </div>
+            <div class="route-details">
+                <div class="route-info">
+                    <h3 id="route-name">North Campus Route</h3>
+                    <div class="route-meta">
+                        <span class="badge active">Active</span>
+                        <span id="route-distance">Total Distance: 25 km</span>
+                        <span id="route-duration">Approx. Duration: 1h 15m</span>
+                    </div>
+                    <div class="route-schedule">
+                        <h4>Schedule</h4>
+                        <div class="timings">
+                            <div class="timing">
+                                <strong>Morning Pickup:</strong> 7:00 AM - 8:30 AM
+                            </div>
+                            <div class="timing">
+                                <strong>Evening Drop:</strong> 4:00 PM - 5:30 PM
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="route-stops">
+                    <h4>Stops</h4>
+                    <ol class="stop-list" id="stop-list">
+                        <!-- Stops will be loaded here -->
+                    </ol>
+                </div>
+                <div class="route-actions">
+                    <button class="btn" onclick="editRoute()">Edit Route</button>
+                    <button class="btn" onclick="viewPassengers()">View Passengers</button>
+                    <button class="btn" onclick="assignVehicle()">Assign Vehicle</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Simulated data
+const routesData = [
+    { name: "North Campus Route", distance: 25, duration: "1h 15m", status: "Active", stops: ["Main Gate", "Library", "Hostel", "Sports Complex"] },
+    { name: "South Campus Route", distance: 18, duration: "50m", status: "Active", stops: ["Admin Block", "Science Building", "Canteen"] }
+];
+
+const vehiclesData = [
+    { number: "KA01AB1234", type: "Bus", route: "North Campus Route", driver: "Mr. Sharma", status: "Running", maintenance: "2024-12-10" },
+    { number: "KA01CD5678", type: "Mini Bus", route: "South Campus Route", driver: "Ms. Rao", status: "Idle", maintenance: "2024-11-01" }
+];
+
+// Dashboard stats
+document.getElementById("active-routes").innerText = routesData.length;
+document.getElementById("route-coverage").innerText = routesData.reduce((sum, r) => sum + r.distance, 0) + " km coverage";
+
+document.getElementById("active-vehicles").innerText = vehiclesData.length;
+document.getElementById("vehicles-available").innerText = vehiclesData.filter(v => v.status === "Idle").length + " available";
+
+document.getElementById("registered-passengers").innerText = 42;
+document.getElementById("daily-riders").innerText = "37 daily riders";
+
+document.getElementById("unpaid-transport-fees").innerText = 5;
+document.getElementById("total-transport-due").innerText = "₹2500 due";
+
+// Load routes
+function showRouteMap() {
+    const container = document.getElementById("route-cards");
+    container.innerHTML = "";
+    routesData.forEach(route => {
+        const card = document.createElement("div");
+        card.className = "route-card";
+        card.innerHTML = `
+            <h4>${route.name}</h4>
+            <p>${route.distance} km | ${route.duration}</p>
+            <button class="btn" onclick="openRouteModal('${route.name}')">Details</button>
+        `;
+        container.appendChild(card);
+    });
+}
+showRouteMap();
+
+// Load vehicles
+function loadVehicles() {
+    const table = document.getElementById("vehicle-table");
+    table.innerHTML = "";
+    vehiclesData.forEach(vehicle => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${vehicle.number}</td>
+            <td>${vehicle.type}</td>
+            <td>${vehicle.route}</td>
+            <td>${vehicle.driver}</td>
+            <td>${vehicle.status}</td>
+            <td>${vehicle.maintenance}</td>
+            <td><button class="btn" onclick="editVehicle('${vehicle.number}')">Edit</button></td>
+        `;
+        table.appendChild(row);
+    });
+}
+loadVehicles();
+
+// Modal logic
+function openRouteModal(routeName) {
+    const route = routesData.find(r => r.name === routeName);
+    if (!route) return;
+
+    document.getElementById("route-name").innerText = route.name;
+    document.getElementById("route-distance").innerText = `Total Distance: ${route.distance} km`;
+    document.getElementById("route-duration").innerText = `Approx. Duration: ${route.duration}`;
+
+    const stopsList = document.getElementById("stop-list");
+    stopsList.innerHTML = "";
+    route.stops.forEach(stop => {
+        const li = document.createElement("li");
+        li.innerText = stop;
+        stopsList.appendChild(li);
+    });
+
+    document.getElementById("route-modal").style.display = "block";
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = "none";
+}
+
+// Navigation functions
+function showDashboard() {
+    document.getElementById("dashboard-section").style.display = "block";
+    // Hide others if any
+}
+
+function showRoutes() {
+    alert("Routes & Stops section coming soon!");
+}
+
+function showVehicles() {
+    alert("Vehicles section coming soon!");
+}
+
+function showDrivers() {
+    alert("Drivers section coming soon!");
+}
+
+function showPassengers() {
+    alert("Passengers section coming soon!");
+}
+
+function showTransportFees() {
+    alert("Transport Fees section coming soon!");
+}
+
+function showAddVehicleModal() {
+    alert("Add Vehicle Modal to be implemented!");
+}
+
+function editRoute() {
+    alert("Edit Route functionality to be implemented!");
+}
+
+function viewPassengers() {
+    alert("Passenger List to be implemented!");
+}
+
+function assignVehicle() {
+    alert("Assign Vehicle functionality to be implemented!");
+}
+
+function editVehicle(vehicleNumber) {
+    alert(`Edit Vehicle: ${vehicleNumber}`);
+}
+
+    </script>
+</body>
+</html>

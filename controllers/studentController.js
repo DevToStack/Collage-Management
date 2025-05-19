@@ -1,7 +1,7 @@
 const { getDB } = require('../database');
 
 exports.dashboard = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [[result]] = await db.query(`
@@ -16,7 +16,7 @@ exports.dashboard = async (req, res) => {
 };
 
 exports.classes = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`
@@ -31,7 +31,7 @@ exports.classes = async (req, res) => {
 };
 
 exports.assignments = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`
@@ -46,7 +46,7 @@ exports.assignments = async (req, res) => {
 };
 
 exports.timetable = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`
@@ -61,7 +61,7 @@ exports.timetable = async (req, res) => {
 };
 
 exports.attendance = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`SELECT * FROM attendance WHERE student_id = ?`, [id]);

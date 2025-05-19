@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management - College System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="styles.css">
+    <style>
+/* Quick Actions Section */
+.quick-actions {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+/* Individual Action Button */
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #333;
+    text-align: center;
+    height: 100%;
+}
+
+.action-btn:hover {
+    background: #4a6cf7;
+    color: white;
+    border-color: #4a6cf7;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(74, 108, 247, 0.2);
+}
+
+.action-btn i {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+.action-btn span {
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+
+/* Specific Button Colors */
+.action-btn:nth-child(1):hover { /* Check Out */
+    background: #28a745;
+    border-color: #28a745;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.action-btn:nth-child(2):hover { /* Return */
+    background: #dc3545;
+    border-color: #dc3545;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+}
+
+.action-btn:nth-child(3):hover { /* Add Book */
+    background: #ffc107;
+    border-color: #ffc107;
+    color: #212529;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+}
+
+.action-btn:nth-child(4):hover { /* Add Member */
+    background: #17a2b8;
+    border-color: #17a2b8;
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .action-buttons {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-btn {
+        padding: 15px 10px;
+    }
+    
+    .action-btn i {
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+    }
+    
+    .action-btn span {
+        font-size: 0.85rem;
+    }
+}
+/* Recent Checkouts Section */
+.recent-checkouts {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.recent-checkouts .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.recent-checkouts .section-header a {
+    color: #4a6cf7;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.recent-checkouts .section-header a:hover {
+    color: #3a5bd9;
+    text-decoration: underline;
+}
+
+/* Popular Books Section */
+.popular-books {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Book Cards Grid */
+.book-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+/* Individual Book Card */
+.book-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.book-cover {
+    height: 160px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.book-details {
+    padding: 15px;
+}
+
+.book-title {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.book-author {
+    color: #666;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+}
+
+.book-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.book-rating {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.book-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-checked-out {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-overdue {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Badge for Popular Books */
+.popular-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #ff5722;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .book-cards {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+    
+    .recent-checkouts .data-table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* Checkout Status Styles */
+.checkout-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.checkout-active {
+    background: #e2f0fd;
+    color: #1a73e8;
+}
+
+.checkout-overdue {
+    background: #fce8e6;
+    color: #d93025;
+}
+
+.checkout-returned {
+    background: #e6f4ea;
+    color: #188038;
+}
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-book fa-2x"></i>
+            <h3>Library System</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showBookManagement()"><i class="fas fa-book-open"></i> <span>Book Management</span></a></li>
+                <li><a href="#" onclick="showCheckouts()"><i class="fas fa-exchange-alt"></i> <span>Checkouts/Returns</span></a></li>
+                <li><a href="#" onclick="showMembers()"><i class="fas fa-users"></i> <span>Library Members</span></a></li>
+                <li><a href="#" onclick="showOverdue()"><i class="fas fa-exclamation-triangle"></i> <span>Overdue Books</span></a></li>
+                <li><a href="#" onclick="showReports()"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="header">
+                <h1>Library Management</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Librarian&background=6f42c1&color=fff" alt="Librarian">
+                    <div class="user-info">
+                        <h4>Library Staff</h4>
+                        <p>Central Library</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="total-books">0</h3>
+                            <p>Total Books</p>
+                        </div>
+                        <div class="card-icon books">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="available-books">0 available</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="active-checkouts">0</h3>
+                            <p>Active Checkouts</p>
+                        </div>
+                        <div class="card-icon checkouts">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="due-today">0 due today</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="overdue-books">0</h3>
+                            <p>Overdue Books</p>
+                        </div>
+                        <div class="card-icon overdue">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="overdue-fines">₹0 in fines</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="new-arrivals">0</h3>
+                            <p>New Arrivals</p>
+                        </div>
+                        <div class="card-icon new">
+                            <i class="fas fa-star"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="arrivals-this-month">This month</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="section-header">
+                    <h2>Quick Actions</h2>
+                </div>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="showCheckoutForm()">
+                        <i class="fas fa-arrow-right"></i>
+                        <span>Check Out Book</span>
+                    </button>
+                    <button class="action-btn" onclick="showReturnForm()">
+                        <i class="fas fa-arrow-left"></i>
+                        <span>Return Book</span>
+                    </button>
+                    <button class="action-btn" onclick="showAddBookForm()">
+                        <i class="fas fa-plus"></i>
+                        <span>Add New Book</span>
+                    </button>
+                    <button class="action-btn" onclick="showMemberForm()">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Add Member</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Recent Checkouts -->
+            <div class="recent-checkouts">
+                <div class="section-header">
+                    <h2>Recent Checkouts</h2>
+                    <a href="#">View All</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Book ID</th>
+                            <th>Title</th>
+                            <th>Member</th>
+                            <th>Checkout Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="checkouts-table">
+                        <!-- Checkouts will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Popular Books -->
+            <div class="popular-books">
+                <div class="section-header">
+                    <h2>Most Popular Books</h2>
+                </div>
+                <div class="book-cards" id="popular-books">
+                    <!-- Popular books will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections (Book Management, Checkouts, etc.) would go here -->
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Check Out Book</h2>
+                <button class="close-btn" onclick="closeModal('checkout-modal')">&times;</button>
+            </div>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="checkout-book">Book (Scan or Search)</label>
+                    <input type="text" id="checkout-book" placeholder="Scan barcode or search by title/author">
+                </div>
+                <div class="form-group">
+                    <label for="checkout-member">Member (Scan or Search)</label>
+                    <input type="text" id="checkout-member" placeholder="Scan ID or search by name">
+                </div>
+                <div class="form-group">
+                    <label for="checkout-due">Due Date</label>
+                    <input type="date" id="checkout-due">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('checkout-modal')">Cancel</button>
+                    <button type="submit" class="btn">Check Out</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

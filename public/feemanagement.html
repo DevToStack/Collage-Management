@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fee Management - College System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Container styles */
+.recent-transactions, .chart-container {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+/* "View All" link styling */
+.section-header a {
+  font-size: 1rem;
+  color: #007bff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.section-header a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Dropdown select styling */
+#chart-period {
+  padding: 6px 10px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+#chart-period:hover, #chart-period:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Table styles */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.data-table thead {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.data-table th, .data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+/* Chart Container */
+.chart {
+  height: 300px;
+  width: 100%;
+  background: #f9fafc;
+  border-radius: 6px;
+  padding: 20px;
+  position: relative;
+}
+
+/* Chart Bars Container */
+.chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 80%;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+/* Individual Bars */
+.chart-bar {
+  width: 10%;
+  min-width: 30px;
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+  position: relative;
+}
+
+.chart-bar:hover {
+  opacity: 0.8;
+}
+
+/* Tooltip effect */
+.chart-bar:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* Month Labels */
+.chart-labels {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 10px;
+}
+
+.chart-labels span {
+  font-size: 0.8rem;
+  color: #666;
+  width: 10%;
+  text-align: center;
+}
+
+/* Chart Title */
+.chart-title {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Y-axis indicators */
+.chart::before {
+  content: "₹80k";
+  position: absolute;
+  left: 10px;
+  top: 20px;
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.chart::after {
+  content: "₹0";
+  position: absolute;
+  left: 10px;
+  bottom: 40px;
+  font-size: 0.7rem;
+  color: #999;
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  #chart-period {
+    width: 100%;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-money-bill-wave fa-2x"></i>
+            <h3>Fee Management</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showFeeRecords()"><i class="fas fa-file-invoice-dollar"></i> <span>Fee Records</span></a></li>
+                <li><a href="#" onclick="showPendingPayments()"><i class="fas fa-clock"></i> <span>Pending Payments</span></a></li>
+                <li><a href="#" onclick="showPaymentHistory()"><i class="fas fa-history"></i> <span>Payment History</span></a></li>
+                <li><a href="#" onclick="showFeeStructure()"><i class="fas fa-table"></i> <span>Fee Structure</span></a></li>
+                <li><a href="#" onclick="showReports()"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="header">
+                <h1>Fee Management Dashboard</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Fee+Manager&background=28a745&color=fff" alt="Fee Manager">
+                    <div class="user-info">
+                        <h4>Fee Manager</h4>
+                        <p>Finance Department</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="total-collected">₹0</h3>
+                            <p>Total Collected</p>
+                        </div>
+                        <div class="card-icon payment">
+                            <i class="fas fa-rupee-sign"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="collection-growth">+0% this month</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="pending-payments">0</h3>
+                            <p>Pending Payments</p>
+                        </div>
+                        <div class="card-icon pending">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="pending-due">₹0 due</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="today-collection">₹0</h3>
+                            <p>Today's Collection</p>
+                        </div>
+                        <div class="card-icon today">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="today-transactions">0 transactions</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="overdue-payments">0</h3>
+                            <p>Overdue Payments</p>
+                        </div>
+                        <div class="card-icon overdue">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="overdue-amount">₹0 overdue</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="recent-transactions">
+                <div class="section-header">
+                    <h2>Recent Transactions</h2>
+                    <a href="#">View All</a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Receipt No.</th>
+                            <th>Student</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Payment Mode</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactions-table">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Fee Collection Chart -->
+            <div class="chart-container">
+                <div class="section-header">
+                    <h2>Monthly Collection</h2>
+                    <select id="chart-period">
+                        <option value="monthly">This Month</option>
+                        <option value="quarterly">This Quarter</option>
+                        <option value="yearly">This Year</option>
+                    </select>
+                </div>
+                <div class="chart" id="fee-collection-chart">
+                    <div class="chart" id="fee-collection-chart">
+                      <div class="chart-bars">
+                        <div class="chart-bar" style="height: 30%; background-color: #4a6cf7;" title="Jan: ₹25,000"></div>
+                        <div class="chart-bar" style="height: 45%; background-color: #4a6cf7;" title="Feb: ₹37,500"></div>
+                        <div class="chart-bar" style="height: 60%; background-color: #4a6cf7;" title="Mar: ₹50,000"></div>
+                        <div class="chart-bar" style="height: 75%; background-color: #4a6cf7;" title="Apr: ₹62,000"></div>
+                        <div class="chart-bar" style="height: 85%; background-color: #4a6cf7;" title="May: ₹71,000"></div>
+                        <div class="chart-bar" style="height: 65%; background-color: #4a6cf7;" title="Jun: ₹54,000"></div>
+                        <div class="chart-bar" style="height: 40%; background-color: #4a6cf7;" title="Jul: ₹33,000"></div>
+                      </div>
+                      <div class="chart-labels">
+                        <span>Jan</span>
+                        <span>Feb</span>
+                        <span>Mar</span>
+                        <span>Apr</span>
+                        <span>May</span>
+                        <span>Jun</span>
+                        <span>Jul</span>
+                      </div>
+                    <div class="chart-title">Monthly Fee Collection (in thousands)</div>
+                </div>
+              </div>
+          </div>
+      </div>
+
+        <!-- Other sections (Fee Records, Pending Payments, etc.) would go here -->
+    </div>
+
+    <!-- Payment Receipt Modal -->
+    <div id="receipt-modal" class="modal">
+        <div class="modal-content receipt-content">
+            <div class="modal-header">
+                <h2>Payment Receipt</h2>
+                <div class="receipt-actions">
+                    <button class="btn btn-print" onclick="printReceipt()"><i class="fas fa-print"></i> Print</button>
+                    <button class="close-btn" onclick="closeModal('receipt-modal')">&times;</button>
+                </div>
+            </div>
+            <div class="receipt-body" id="receipt-body">
+                <!-- Receipt content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+              // script.js
+              document.querySelectorAll('.chart-bar').forEach(bar => {
+        bar.addEventListener('click', function() {
+          this.style.backgroundColor = '#ff5722';
+          alert(this.getAttribute('title'));
+        });
+      });
+      // Example using Chart.js
+      const ctx = document.getElementById('fee-collection-chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+          datasets: [{
+            label: 'Fee Collection',
+            data: [25000, 37500, 50000, 62000, 71000, 54000, 33000],
+            backgroundColor: '#4a6cf7'
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Section toggle functions
+      function hideAllSections() {
+          const sections = document.querySelectorAll('.main-content > div');
+          sections.forEach(section => section.style.display = 'none');
+      }
+
+      function showDashboard() {
+          hideAllSections();
+          document.getElementById('dashboard-section').style.display = 'block';
+      }
+
+      function showFeeRecords() {
+          alert("Fee Records section coming soon.");
+      }
+
+      function showPendingPayments() {
+          alert("Pending Payments section coming soon.");
+      }
+
+      function showPaymentHistory() {
+          alert("Payment History section coming soon.");
+      }
+
+      function showFeeStructure() {
+          alert("Fee Structure section coming soon.");
+      }
+
+      function showReports() {
+          alert("Reports section coming soon.");
+      }
+
+      // Modal handling
+      function closeModal(id) {
+          document.getElementById(id).style.display = 'none';
+      }
+
+      function printReceipt() {
+          const receiptContent = document.getElementById('receipt-body').innerHTML;
+          const newWindow = window.open('', '_blank');
+          newWindow.document.write('<html><head><title>Print Receipt</title></head><body>');
+          newWindow.document.write(receiptContent);
+          newWindow.document.write('</body></html>');
+          newWindow.document.close();
+          newWindow.print();
+      }
+
+      // Sample data loader
+      function loadDashboardData() {
+          document.getElementById("total-collected").innerText = "₹1,25,000";
+          document.getElementById("collection-growth").innerText = "+12% this month";
+          document.getElementById("pending-payments").innerText = "5";
+          document.getElementById("pending-due").innerText = "₹15,000 due";
+          document.getElementById("today-collection").innerText = "₹10,000";
+          document.getElementById("today-transactions").innerText = "4 transactions";
+          document.getElementById("overdue-payments").innerText = "2";
+          document.getElementById("overdue-amount").innerText = "₹5,000 overdue";
+
+          const transactions = [
+              { receipt: "R101", student: "Alice", amount: "₹3000", date: "2025-05-19", mode: "Cash", status: "Paid" },
+              { receipt: "R102", student: "Bob", amount: "₹2500", date: "2025-05-19", mode: "UPI", status: "Paid" },
+              { receipt: "R103", student: "Charlie", amount: "₹2000", date: "2025-05-18", mode: "Card", status: "Pending" }
+          ];
+
+          const table = document.getElementById("transactions-table");
+          table.innerHTML = ""; // Clear existing
+
+          transactions.forEach(tx => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                  <td>${tx.receipt}</td>
+                  <td>${tx.student}</td>
+                  <td>${tx.amount}</td>
+                  <td>${tx.date}</td>
+                  <td>${tx.mode}</td>
+                  <td>${tx.status}</td>
+              `;
+              table.appendChild(row);
+          });
+      }
+
+      // Chart placeholder (you can integrate a library later like Chart.js)
+      function loadChart(period) {
+          const chart = document.getElementById("fee-collection-chart");
+          chart.innerHTML = `<p>Displaying ${period} collection chart (to be implemented).</p>`;
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+          showDashboard();
+          loadDashboardData();
+          loadChart('monthly');
+
+          document.getElementById("chart-period").addEventListener("change", (e) => {
+              loadChart(e.target.value);
+          });
+      });
+
+
+    </script>
+
+</body>
+</html>

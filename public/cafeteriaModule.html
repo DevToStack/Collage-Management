@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cafeteria - College System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Popular Items Section */
+        .popular-items {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .popular-items .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .popular-items .section-header a {
+            color: #4a6cf7;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .popular-items .section-header a:hover {
+            background: #f5f8ff;
+            text-decoration: underline;
+        }
+
+        /* Item Cards Grid */
+        .item-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        /* Individual Item Card */
+        .item-card {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid #f0f0f0;
+        }
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .item-image {
+            height: 120px;
+            background: #f8f9fa;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .item-card:hover .item-image img {
+            transform: scale(1.05);
+        }
+
+        .item-details {
+            padding: 16px;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .item-price {
+            color: #4a6cf7;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .item-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .item-orders {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .item-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #ffb800;
+        }
+
+        /* Daily Sales Section */
+        .daily-sales {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 24px;
+        }
+
+        .daily-sales .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Sales Period Selector */
+        #sales-period {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background-color: #fff;
+            font-size: 0.9rem;
+            color: #555;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 16px;
+            padding-right: 36px;
+        }
+
+        #sales-period:hover {
+            border-color: #4a6cf7;
+        }
+
+        #sales-period:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 2px rgba(74, 108, 247, 0.2);
+        }
+
+        /* Sales Container Layout */
+        .sales-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        /* Sales Chart Area */
+        .sales-chart {
+            height: 280px;
+            background: #f9fafc;
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+        }
+
+        /* Sales Summary */
+        .sales-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-item {
+            background: #f9fafc;
+            border-radius: 10px;
+            padding: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .summary-item:hover {
+            background: #f0f4ff;
+            transform: translateY(-2px);
+        }
+
+        .summary-item h4 {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .summary-item p {
+            color: #333;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        #total-sales {
+            color: #4a6cf7;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .sales-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sales-chart {
+                height: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .item-cards {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .item-image {
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .popular-items .section-header,
+            .daily-sales .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .item-cards {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-utensils fa-2x"></i>
+            <h3>Cafeteria</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showMenu()"><i class="fas fa-book-open"></i> <span>Menu</span></a></li>
+                <li><a href="#" onclick="showInventory()"><i class="fas fa-boxes"></i> <span>Inventory</span></a></li>
+                <li><a href="#" onclick="showOrders()"><i class="fas fa-receipt"></i> <span>Orders</span></a></li>
+                <li><a href="#" onclick="showVendors()"><i class="fas fa-truck"></i> <span>Vendors</span></a></li>
+                <li><a href="#" onclick="showReports()"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="header">
+                <h1>Cafeteria Management</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Cafeteria+Manager&background=fd7e14&color=fff" alt="Cafeteria Manager">
+                    <div class="user-info">
+                        <h4>Cafeteria Manager</h4>
+                        <p>Main Cafeteria</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="today-orders">0</h3>
+                            <p>Today's Orders</p>
+                        </div>
+                        <div class="card-icon orders">
+                            <i class="fas fa-receipt"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="today-revenue">₹0 revenue</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="low-stock">0</h3>
+                            <p>Low Stock Items</p>
+                        </div>
+                        <div class="card-icon stock">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="out-of-stock">0 out of stock</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="pending-supplies">0</h3>
+                            <p>Pending Supplies</p>
+                        </div>
+                        <div class="card-icon supplies">
+                            <i class="fas fa-truck-loading"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="expected-today">0 expected today</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="active-vendors">0</h3>
+                            <p>Active Vendors</p>
+                        </div>
+                        <div class="card-icon vendors">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="vendor-rating">Avg. rating: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Popular Items -->
+            <div class="popular-items">
+                <div class="section-header">
+                    <h2>Today's Popular Items</h2>
+                    <a href="#">View Full Menu</a>
+                </div>
+                <div class="item-cards" id="popular-items">
+                    <!-- Popular items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Daily Sales -->
+            <div class="daily-sales">
+                <div class="section-header">
+                    <h2>Daily Sales</h2>
+                    <select id="sales-period">
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="sales-container">
+                    <div class="sales-chart" id="sales-chart">
+                        <!-- Chart will be rendered here -->
+                    </div>
+                    <div class="sales-summary">
+                        <div class="summary-item">
+                            <h4>Total Sales</h4>
+                            <p id="total-sales">₹0</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Top Item</h4>
+                            <p id="top-item">-</p>
+                        </div>
+                        <div class="summary-item">
+                            <h4>Busiest Hour</h4>
+                            <p id="busiest-hour">-</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections would go here -->
+    </div>
+
+    <!-- Menu Item Modal -->
+    <div id="menu-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Menu Item Details</h2>
+                <button class="close-btn" onclick="closeModal('menu-modal')">&times;</button>
+            </div>
+            <form id="menu-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item-name">Item Name</label>
+                        <input type="text" id="item-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-category">Category</label>
+                        <select id="item-category" required>
+                            <option value="">Select Category</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="snacks">Snacks</option>
+                            <option value="beverages">Beverages</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="item-price">Price (₹)</label>
+                        <input type="number" id="item-price" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="item-cost">Cost (₹)</label>
+                        <input type="number" id="item-cost" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="item-description">Description</label>
+                    <textarea id="item-description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="item-image">Image</label>
+                    <input type="file" id="item-image" accept="image/*">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-cancel" onclick="closeModal('menu-modal')">Cancel</button>
+                    <button type="submit" class="btn">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+  // Elements for main sections
+  const dashboardSection = document.getElementById('dashboard-section');
+  // You can create similar divs for other sections like menu, inventory, orders, etc.
+
+  // Sidebar menu functions to show/hide sections
+  function showDashboard() {
+    dashboardSection.style.display = 'block';
+    // Hide other sections if any, e.g. menuSection.style.display = 'none'
+  }
+
+  function showMenu() {
+    alert('Show Menu Section - Implement this!');
+    // Implement showing menu section and hiding others
+  }
+
+  function showInventory() {
+    alert('Show Inventory Section - Implement this!');
+  }
+
+  function showOrders() {
+    alert('Show Orders Section - Implement this!');
+  }
+
+  function showVendors() {
+    alert('Show Vendors Section - Implement this!');
+  }
+
+  function showReports() {
+    alert('Show Reports Section - Implement this!');
+  }
+
+  // Modal handling
+  function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+  }
+
+  function openModal(id) {
+    document.getElementById(id).style.display = 'block';
+  }
+
+  // Example: Populate dashboard cards with sample data
+  function updateDashboard() {
+    document.getElementById('today-orders').textContent = 15;
+    document.getElementById('today-revenue').textContent = '₹1250 revenue';
+
+    document.getElementById('low-stock').textContent = 3;
+    document.getElementById('out-of-stock').textContent = '1 out of stock';
+
+    document.getElementById('pending-supplies').textContent = 2;
+    document.getElementById('expected-today').textContent = '5 expected today';
+
+    document.getElementById('active-vendors').textContent = 4;
+    document.getElementById('vendor-rating').textContent = 'Avg. rating: 4.5';
+  }
+
+  // Example: Populate popular items dynamically
+  function loadPopularItems() {
+    const popularItemsContainer = document.getElementById('popular-items');
+    const items = [
+      {name: 'Veg Sandwich', image: 'https://via.placeholder.com/100', price: 50},
+      {name: 'Cold Coffee', image: 'https://via.placeholder.com/100', price: 40},
+      {name: 'Pasta', image: 'https://via.placeholder.com/100', price: 70},
+    ];
+
+    popularItemsContainer.innerHTML = ''; // Clear previous
+
+    items.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" />
+        <h4>${item.name}</h4>
+        <p>₹${item.price}</p>
+      `;
+      popularItemsContainer.appendChild(card);
+    });
+  }
+
+  // Initialize dashboard on page load
+  window.onload = () => {
+    showDashboard();
+    updateDashboard();
+    loadPopularItems();
+
+    // Close modal when clicking outside modal content
+    window.onclick = function(event) {
+      const modal = document.getElementById('menu-modal');
+      if(event.target === modal) {
+        closeModal('menu-modal');
+      }
+    }
+
+    // Form submission handler for menu item form
+    document.getElementById('menu-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('Menu item saved! (Implement saving logic here)');
+      closeModal('menu-modal');
+      // Reset form or update menu list dynamically
+      this.reset();
+    });
+  }
+</script>
+
+</body>
+</html>

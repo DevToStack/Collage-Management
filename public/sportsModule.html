@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Department - College System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Container for upcoming events and recent achievements */
+.upcoming-events, .recent-achievements {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+/* Buttons */
+.btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+/* Special style for Add buttons */
+.btn-add {
+  background-color: #28a745;
+}
+
+.btn-add:hover {
+  background-color: #1e7e34;
+}
+
+/* Table styling for upcoming events */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  color: #444;
+}
+
+.data-table thead {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.data-table th, .data-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.data-table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Actions buttons in table rows */
+.action-btn {
+  background-color: #ffc107;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #333;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.action-btn:hover {
+  background-color: #e0a800;
+}
+
+/* Achievement cards container */
+.achievement-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+/* Example achievement card style */
+.achievement-card {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  flex: 1 1 250px;
+  min-width: 250px;
+  color: #333;
+  font-size: 1rem;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .achievement-cards {
+    flex-direction: column;
+  }
+}
+
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-running fa-2x"></i>
+            <h3>Sports Dept</h3>
+        </div>
+        <div class="sidebar-menu">
+            <ul>
+                <li><a href="#" onclick="showDashboard()"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" onclick="showTeams()"><i class="fas fa-users"></i> <span>Teams</span></a></li>
+                <li><a href="#" onclick="showTournaments()"><i class="fas fa-trophy"></i> <span>Tournaments</span></a></li>
+                <li><a href="#" onclick="showSchedule()"><i class="fas fa-calendar-alt"></i> <span>Schedule</span></a></li>
+                <li><a href="#" onclick="showInventory()"><i class="fas fa-tshirt"></i> <span>Inventory</span></a></li>
+                <li><a href="#" onclick="showAchievements()"><i class="fas fa-medal"></i> <span>Achievements</span></a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard-section">
+            <div class="header">
+                <h1>Sports Department</h1>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Sports+Officer&background=e83e8c&color=fff" alt="Sports Officer">
+                    <div class="user-info">
+                        <h4>Sports Officer</h4>
+                        <p>Physical Education</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cards -->
+            <div class="cards-container">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="active-teams">0</h3>
+                            <p>Active Teams</p>
+                        </div>
+                        <div class="card-icon teams">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="team-members">0 members</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="upcoming-events">0</h3>
+                            <p>Upcoming Events</p>
+                        </div>
+                        <div class="card-icon events">
+                            <i class="fas fa-calendar-day"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="next-event">Next: --/--</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="total-medals">0</h3>
+                            <p>Total Medals</p>
+                        </div>
+                        <div class="card-icon medals">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="this-year">This year: 0</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h3 id="equipment-items">0</h3>
+                            <p>Equipment Items</p>
+                        </div>
+                        <div class="card-icon equipment">
+                            <i class="fas fa-tshirt"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span id="maintenance-due">0 due</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="upcoming-events">
+                <div class="section-header">
+                    <h2>Upcoming Sports Events</h2>
+                    <button class="btn btn-add" onclick="showAddEventModal()">Add Event</button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Event</th>
+                            <th>Sport</th>
+                            <th>Venue</th>
+                            <th>Team</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="events-table">
+                        <!-- Events will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Recent Achievements -->
+            <div class="recent-achievements">
+                <div class="section-header">
+                    <h2>Recent Achievements</h2>
+                    <button class="btn btn-add" onclick="showAddAchievementModal()">Add Achievement</button>
+                </div>
+                <div class="achievement-cards" id="achievement-cards">
+                    <!-- Achievement cards will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Other sections would go here -->
+    </div>
+
+    <!-- Team Details Modal -->
+    <div id="team-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Team Details</h2>
+                <button class="close-btn" onclick="closeModal('team-modal')">&times;</button>
+            </div>
+            <div class="team-details">
+                <div class="team-header">
+                    <div class="team-basic">
+                        <h3 id="team-name">Team Name</h3>
+                        <p id="team-sport">Sport: Basketball</p>
+                        <p id="team-captain">Captain: Student Name</p>
+                    </div>
+                    <div class="team-image">
+                        <img src="default-team.jpg" alt="Team Photo" id="team-photo">
+                    </div>
+                </div>
+                <div class="team-members">
+                    <h4>Team Members (12)</h4>
+                    <div class="member-list" id="member-list">
+                        <!-- Members will be loaded here -->
+                    </div>
+                </div>
+                <div class="team-performance">
+                    <h4>Performance</h4>
+                    <div class="performance-stats">
+                        <div class="stat-item">
+                            <h5>Matches Played</h5>
+                            <p id="matches-played">15</p>
+                        </div>
+                        <div class="stat-item">
+                            <h5>Wins</h5>
+                            <p id="matches-won">10</p>
+                        </div>
+                        <div class="stat-item">
+                            <h5>Losses</h5>
+                            <p id="matches-lost">5</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-actions">
+                    <button class="btn" onclick="editTeam()">Edit Team</button>
+                    <button class="btn" onclick="schedulePractice()">Schedule Practice</button>
+                    <button class="btn" onclick="viewTeamHistory()">View History</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<script>
+    // Dummy data (You can fetch from a server or localStorage later)
+    const teams = [
+        { name: "Basketball Warriors", sport: "Basketball", captain: "John Doe", members: 12, played: 15, won: 10, lost: 5, photo: "default-team.jpg" }
+    ];
+
+    const events = [
+        { date: "2025-06-25", event: "Inter College Match", sport: "Football", venue: "Main Ground", team: "Football Champs", status: "Scheduled" }
+    ];
+
+    const achievements = [
+        { title: "District Champions", description: "Won district-level cricket tournament", date: "2025-04-10" }
+    ];
+
+    // Populate Dashboard stats
+    function loadDashboardStats() {
+        document.getElementById('active-teams').textContent = teams.length;
+        document.getElementById('team-members').textContent = `${teams[0].members} members`;
+
+        document.getElementById('upcoming-events').textContent = events.length;
+        document.getElementById('next-event').textContent = `Next: ${events[0]?.date || "--/--"}`;
+
+        document.getElementById('total-medals').textContent = achievements.length;
+        document.getElementById('this-year').textContent = `This year: ${achievements.length}`;
+
+        document.getElementById('equipment-items').textContent = 120;
+        document.getElementById('maintenance-due').textContent = "3 due";
+    }
+
+    // Populate events table
+    function loadEvents() {
+        const table = document.getElementById('events-table');
+        table.innerHTML = "";
+        events.forEach((event, index) => {
+            table.innerHTML += `
+                <tr>
+                    <td>${event.date}</td>
+                    <td>${event.event}</td>
+                    <td>${event.sport}</td>
+                    <td>${event.venue}</td>
+                    <td>${event.team}</td>
+                    <td>${event.status}</td>
+                    <td>
+                        <button class="btn" onclick="editEvent(${index})">Edit</button>
+                        <button class="btn" onclick="deleteEvent(${index})">Delete</button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // Populate achievements
+    function loadAchievements() {
+        const container = document.getElementById('achievement-cards');
+        container.innerHTML = "";
+        achievements.forEach(ach => {
+            container.innerHTML += `
+                <div class="achievement-card">
+                    <h4>${ach.title}</h4>
+                    <p>${ach.description}</p>
+                    <span>${ach.date}</span>
+                </div>
+            `;
+        });
+    }
+
+    // Show modals (basic logic)
+    function showAddEventModal() {
+        alert("Add Event Modal triggered!");
+    }
+
+    function showAddAchievementModal() {
+        alert("Add Achievement Modal triggered!");
+    }
+
+    // Show sections (stub functions, add actual section toggling if needed)
+    function showDashboard() { alert("Dashboard section shown"); }
+    function showTeams() { alert("Teams section shown"); }
+    function showTournaments() { alert("Tournaments section shown"); }
+    function showSchedule() { alert("Schedule section shown"); }
+    function showInventory() { alert("Inventory section shown"); }
+    function showAchievements() { alert("Achievements section shown"); }
+
+    // Modal close
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    // Team modal example
+    function viewTeam(index = 0) {
+        const team = teams[index];
+        document.getElementById('team-name').textContent = team.name;
+        document.getElementById('team-sport').textContent = `Sport: ${team.sport}`;
+        document.getElementById('team-captain').textContent = `Captain: ${team.captain}`;
+        document.getElementById('team-photo').src = team.photo;
+        document.getElementById('matches-played').textContent = team.played;
+        document.getElementById('matches-won').textContent = team.won;
+        document.getElementById('matches-lost').textContent = team.lost;
+
+        document.getElementById('member-list').innerHTML = "";
+        for (let i = 1; i <= team.members; i++) {
+            document.getElementById('member-list').innerHTML += `<p>Member ${i}</p>`;
+        }
+
+        document.getElementById('team-modal').style.display = "block";
+    }
+
+    // Placeholder actions
+    function editTeam() { alert("Edit team logic here"); }
+    function schedulePractice() { alert("Schedule practice logic here"); }
+    function viewTeamHistory() { alert("View team history"); }
+
+    function editEvent(index) {
+        alert(`Edit event ${index}`);
+    }
+
+    function deleteEvent(index) {
+        if (confirm("Are you sure you want to delete this event?")) {
+            events.splice(index, 1);
+            loadEvents();
+        }
+    }
+
+    // Initial load
+    window.onload = function () {
+        loadDashboardStats();
+        loadEvents();
+        loadAchievements();
+    };
+</script>
+
+</body>
+</html>

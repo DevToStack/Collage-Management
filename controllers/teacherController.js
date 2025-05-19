@@ -1,7 +1,7 @@
 const { getDB } = require('../database');
 
 exports.dashboard = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [[counts]] = await db.query(`
@@ -17,7 +17,7 @@ exports.dashboard = async (req, res) => {
 };
 
 exports.activities = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`SELECT * FROM activities WHERE teacher_id = ? ORDER BY date DESC LIMIT 10`, [id]);
@@ -28,7 +28,7 @@ exports.activities = async (req, res) => {
 };
 
 exports.classes = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`SELECT * FROM classes WHERE teacher_id = ?`, [id]);
@@ -39,7 +39,7 @@ exports.classes = async (req, res) => {
 };
 
 exports.todayClasses = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     const today = new Date().toISOString().slice(0, 10);
     try {
@@ -51,7 +51,7 @@ exports.todayClasses = async (req, res) => {
 };
 
 exports.assignments = async (req, res) => {
-    const db = getDB();
+    const db = getDB;
     const id = req.params.id;
     try {
         const [rows] = await db.query(`SELECT * FROM assignments WHERE teacher_id = ?`, [id]);

@@ -6,6 +6,118 @@
     <title>Student Dashboard - School Management System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Container styling */
+.recent-activity, .upcoming-classes, .assignments-section {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.08);
+  padding: 26px 32px;
+  margin-bottom: 32px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Section header */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.section-header h2 {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: #222;
+  margin: 0;
+}
+
+.section-header a {
+  color: #007bff;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.section-header a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Activity List */
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 320px;
+  overflow-y: auto;
+  border-top: 1.5px solid #ddd;
+}
+
+.activity-list li {
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 1rem;
+  color: #444;
+  line-height: 1.4;
+  cursor: default;
+  transition: background-color 0.25s ease;
+}
+
+.activity-list li:hover {
+  background-color: #f0f6ff;
+}
+
+/* Today Schedule & Pending Assignments container */
+#today-schedule, #pending-assignments {
+  border-top: 1.5px solid #ddd;
+  padding-top: 14px;
+}
+
+/* Example block inside dynamic content */
+#today-schedule > div, #pending-assignments > div {
+  background: #f9fbff;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.06);
+  font-size: 1rem;
+  color: #333;
+  cursor: default;
+  transition: box-shadow 0.3s ease;
+}
+
+#today-schedule > div:hover, #pending-assignments > div:hover {
+  box-shadow: 0 5px 18px rgb(0 123 255 / 0.2);
+}
+
+/* Scrollbar styling for activity list */
+.activity-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+  background-color: #c2d1ff;
+  border-radius: 20px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Responsive tweaks */
+@media (max-width: 600px) {
+  .section-header h2 {
+    font-size: 1.6rem;
+  }
+  .section-header a {
+    font-size: 0.9rem;
+  }
+}
+
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
