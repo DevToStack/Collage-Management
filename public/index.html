@@ -132,7 +132,12 @@
             outline: 2px solid var(--accent-color);
             outline-offset: 2px;
         }
-        
+        #backToTop{
+            position: fixed;
+            bottom: 20px;
+            left:20px;
+            z-index: 1000;
+        }
         /* Loading animation */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
@@ -250,7 +255,7 @@
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="display-5 fw-bold mb-3">Featured Colleges</h2>
-                <p class="lead text-muted">Discover top institutions using our platform</p>
+                <p class="lead mb4">Discover top institutions using our platform</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
@@ -314,7 +319,7 @@
     <section class="py-5 bg-light" id="rankings">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">College Rankings 2023</h2>
+                <h2 class="display-5 fw-bold text-warning">College Rankings 2023</h2>
                 <p class="lead text-muted">Based on comprehensive evaluation metrics</p>
             </div>
             <div class="table-responsive">
@@ -417,7 +422,7 @@
         <div class="container">
             <div class="text-center mb-5">
                 <h2 class="display-5 fw-bold mb-3">Why Choose EduManage Pro?</h2>
-                <p class="lead text-muted">Comprehensive tools for modern educational institutions</p>
+                <p class="lead">Comprehensive tools for modern educational institutions</p>
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
@@ -427,7 +432,7 @@
                                 <i class="fas fa-tachometer-alt"></i>
                             </div>
                             <h3 class="h4">Dashboard Analytics</h3>
-                            <p class="text-muted">Real-time insights into student performance, attendance, and institutional metrics with customizable dashboards.</p>
+                            <p class="mb4">Real-time insights into student performance, attendance, and institutional metrics with customizable dashboards.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -439,7 +444,7 @@
                                 <i class="fas fa-user-graduate"></i>
                             </div>
                             <h3 class="h4">Student Management</h3>
-                            <p class="text-muted">Comprehensive student profiles, academic tracking, and behavior monitoring in one centralized system.</p>
+                            <p class="mb4">Comprehensive student profiles, academic tracking, and behavior monitoring in one centralized system.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -451,7 +456,7 @@
                                 <i class="fas fa-chalkboard-teacher"></i>
                             </div>
                             <h3 class="h4">Faculty Tools</h3>
-                            <p class="text-muted">Grade submission, attendance tracking, and communication tools designed specifically for educators.</p>
+                            <p class="mb4">Grade submission, attendance tracking, and communication tools designed specifically for educators.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -463,7 +468,7 @@
                                 <i class="fas fa-calendar-alt"></i>
                             </div>
                             <h3 class="h4">Scheduling</h3>
-                            <p class="text-muted">Automated class scheduling with conflict resolution and room allocation algorithms.</p>
+                            <p class="mb4">Automated class scheduling with conflict resolution and room allocation algorithms.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -475,7 +480,7 @@
                                 <i class="fas fa-money-bill-wave"></i>
                             </div>
                             <h3 class="h4">Financial Management</h3>
-                            <p class="text-muted">Tuition tracking, fee collection, budgeting, and financial reporting tools.</p>
+                            <p class="mb4">Tuition tracking, fee collection, budgeting, and financial reporting tools.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -487,7 +492,7 @@
                                 <i class="fas fa-mobile-alt"></i>
                             </div>
                             <h3 class="h4">Mobile Access</h3>
-                            <p class="text-muted">Fully responsive design with dedicated mobile apps for students, faculty, and administrators.</p>
+                            <p class="mb4">Fully responsive design with dedicated mobile apps for students, faculty, and administrators.</p>
                             <a href="#" class="btn btn-link text-primary text-decoration-none">Learn more <i class="fas fa-arrow-right ms-1"></i></a>
                         </div>
                     </div>
@@ -537,7 +542,7 @@
     <section class="py-5 bg-light" id="testimonials">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">What Our Clients Say</h2>
+                <h2 class="display-5 fw-bold text-warning">What Our Clients Say</h2>
                 <p class="lead text-muted">Trusted by educational institutions worldwide</p>
             </div>
             <div class="row">
@@ -547,7 +552,7 @@
                             <img src="https://randomuser.me/api/portraits/women/45.jpg" class="rounded-circle me-3" width="70" height="70" alt="Sarah Johnson" loading="lazy">
                             <div>
                                 <h5 class="mb-0">Sarah Johnson</h5>
-                                <p class="text-muted mb-0">Registrar, Boston College</p>
+                                <p class="mb4 mb-0">Registrar, Boston College</p>
                             </div>
                         </div>
                         <p class="mb-4">"EduManage Pro has transformed our administrative processes. What used to take days now takes hours, and our faculty and students are much happier with the streamlined experience."</p>
@@ -558,7 +563,7 @@
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                         </div>
-                        <small class="text-muted">Posted 2 months ago</small>
+                        <small class="mb4">Posted 2 months ago</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -567,7 +572,7 @@
                             <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle me-3" width="70" height="70" alt="Dr. Michael Chen" loading="lazy">
                             <div>
                                 <h5 class="mb-0">Dr. Michael Chen</h5>
-                                <p class="text-muted mb-0">Dean, Stanford University</p>
+                                <p class="mb4 mb-0">Dean, Stanford University</p>
                             </div>
                         </div>
                         <p class="mb-4">"The analytics capabilities have given us insights we never had before. We can now make data-driven decisions about curriculum, staffing, and resource allocation."</p>
@@ -578,7 +583,7 @@
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star-half-alt"></i>
                         </div>
-                        <small class="text-muted">Posted 1 month ago</small>
+                        <small class="mb4">Posted 1 month ago</small>
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -587,7 +592,7 @@
                             <img src="https://randomuser.me/api/portraits/women/68.jpg" class="rounded-circle me-3" width="70" height="70" alt="Lisa Rodriguez" loading="lazy">
                             <div>
                                 <h5 class="mb-0">Lisa Rodriguez</h5>
-                                <p class="text-muted mb-0">IT Director, NYU</p>
+                                <p class="mb4 mb-0">IT Director, NYU</p>
                             </div>
                         </div>
                         <p class="mb-4">"Implementation was smooth and the support team was excellent. The system integrates well with our existing infrastructure and has significantly reduced our administrative overhead."</p>
@@ -598,7 +603,7 @@
                             <i class="fas fa-star"></i>
                             <i class="fas fa-star"></i>
                         </div>
-                        <small class="text-muted">Posted 3 weeks ago</small>
+                        <small class="mb4">Posted 3 weeks ago</small>
                     </div>
                 </div>
             </div>
@@ -694,7 +699,7 @@
     <section class="py-5 bg-light">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="display-5 fw-bold mb-3">Frequently Asked Questions</h2>
+                <h2 class="display-5 fw-bold text-warning">Frequently Asked Questions</h2>
                 <p class="lead text-muted">Find answers to common questions about EduManage Pro</p>
             </div>
             <div class="row justify-content-center">
@@ -834,7 +839,7 @@
                             <button class="btn btn-primary" type="submit">Subscribe</button>
                         </div>
                     </form>
-                    <small class="text-muted">We'll never share your email with anyone else.</small>
+                    <small class="mb4">We'll never share your email with anyone else.</small>
                 </div>
             </div>
             <hr class="my-4">
