@@ -223,36 +223,7 @@
                     <a href="#">View All</a>
                 </div>
                 <ul class="activity-list" id="activity-list">
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-tasks"></i>
-                        </div>
-                        <div class="activity-info">
-                            <h4>New Assignment Created</h4>
-                            <p>Algebra Homework for Grade 9</p>
-                        </div>
-                        <div class="activity-time">2 hours ago</div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="activity-info">
-                            <h4>Assignment Graded</h4>
-                            <p>Geometry Quiz for Grade 10</p>
-                        </div>
-                        <div class="activity-time">1 day ago</div>
-                    </li>
-                    <li class="activity-item">
-                        <div class="activity-icon">
-                            <i class="fas fa-bullhorn"></i>
-                        </div>
-                        <div class="activity-info">
-                            <h4>New Announcement</h4>
-                            <p>Parent-Teacher Meeting Scheduled</p>
-                        </div>
-                        <div class="activity-time">2 days ago</div>
-                    </li>
+                    
                 </ul>
             </div>
 
@@ -263,34 +234,9 @@
                     <a href="#">View All</a>
                 </div>
                 <div class="class-item">
-                    <div class="class-header">
-                        <div class="class-title">Grade 9 - Algebra</div>
-                        <div class="class-time">9:00 AM - 10:00 AM</div>
-                    </div>
-                    <div class="class-content">
-                        Topic: Quadratic Equations | Room: 201
-                    </div>
-                </div>
-                <div class="class-item">
-                    <div class="class-header">
-                        <div class="class-title">Grade 10 - Geometry</div>
-                        <div class="class-time">11:00 AM - 12:00 PM</div>
-                    </div>
-                    <div class="class-content">
-                        Topic: Trigonometry | Room: 205
-                    </div>
-                </div>
-                <div class="class-item">
-                    <div class="class-header">
-                        <div class="class-title">Grade 11 - Calculus</div>
-                        <div class="class-time">1:00 PM - 2:00 PM</div>
-                    </div>
-                    <div class="class-content">
-                        Topic: Derivatives | Room: 210
-                    </div>
+                    
                 </div>
             </div>
-        </div>
 
         <!-- Classes Section -->
         <div id="classes-section" style="display: none;">
@@ -500,8 +446,8 @@
     
     <script>
         // API Configuration
-        const API_BASE_URL = '/api';
-        const TEACHER_ID = 1; // In a real app, this would come from authentication
+        const API_BASE_URL = '/api/teacher';
+        const TEACHER_ID = 100; // In a real app, this would come from authentication
 
         // DOM Elements
         const elements = {
@@ -625,9 +571,7 @@
         const dataService = {
             getDashboardData: async () => {
                 return {
-                    counts: await apiService.get(`/tdashboard/counts?teacherId=${TEACHER_ID}`),
-                    activities: await apiService.get(`/tactivities?teacherId=${TEACHER_ID}`),
-                    classes: await apiService.get(`/tclasses/today?teacherId=${TEACHER_ID}`)
+                    counts: await apiService.get(`/?teacherId=${TEACHER_ID}`)
                 };
             },
             

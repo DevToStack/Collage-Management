@@ -903,171 +903,242 @@
         </div>
     </div>
 
-    <!-- Registration Modal -->
     <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="registerModalLabel">Create New Account</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <ul class="nav nav-pills mb-4 justify-content-center" id="registerTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="college-tab" data-bs-toggle="pill" data-bs-target="#college" type="button" role="tab">College</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="student-tab" data-bs-toggle="pill" data-bs-target="#student" type="button" role="tab">Student</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="faculty-tab" data-bs-toggle="pill" data-bs-target="#faculty" type="button" role="tab">Faculty</button>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="registerTabContent">
-                        <div class="tab-pane fade show active" id="college" role="tabpanel" aria-labelledby="college-tab">
-                            <form>
-                                <div class="mb-3">
-                                    <label for="collegeName" class="form-label">College/University Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="collegeName" required>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Create New Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-pills mb-4 justify-content-center" id="registerTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="college-tab" data-bs-toggle="pill" data-bs-target="#college" type="button" role="tab">College/Coaching</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="student-tab" data-bs-toggle="pill" data-bs-target="#student" type="button" role="tab">Student</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="faculty-tab" data-bs-toggle="pill" data-bs-target="#faculty" type="button" role="tab">Faculty/Staff</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="registerTabContent">
+                    <!-- College/Coaching Center Registration -->
+                    <div class="tab-pane fade show active" id="registerModal" role="tabpanel" aria-labelledby="college-tab">
+                        <form id="collegeRegisterForm">
+                            <div class="mb-3">
+                                <label for="collegeType" class="form-label">Institution Type <span class="text-danger">*</span></label>
+                                <select class="form-select" id="collegeType" required>
+                                    <option value="" selected disabled>Select Type</option>
+                                    <option value="university">University/College</option>
+                                    <option value="coaching_center">Coaching Center</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeName" class="form-label">Institution Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="collegeName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeCode" class="form-label">Institution Code <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="collegeCode" required>
+                                <small class="text-muted">This will be your unique identifier (e.g., UNIV001, COACH002)</small>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeCategory" class="form-label">Institution Category <span class="text-danger">*</span></label>
+                                <select class="form-select" id="collegeCategory" required>
+                                    <option value="" selected disabled>Select Category</option>
+                                    <option value="government">Government</option>
+                                    <option value="private">Private</option>
+                                    <option value="autonomous">Autonomous</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeEstablished" class="form-label">Established Year</label>
+                                <input type="number" class="form-control" id="collegeEstablished" min="1800" max="2099">
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeEmail" class="form-label">Official Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="collegeEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegePhone" class="form-label">Contact Phone <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="collegePhone" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeWebsite" class="form-label">Website</label>
+                                <input type="url" class="form-control" id="collegeWebsite">
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeAddress" class="form-label">Address <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="collegeAddress" rows="2" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="collegeCity" class="form-label">City <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="collegeCity" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="collegeEmail" class="form-label">Official Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="collegeEmail" required>
+                                <div class="col-md-6 mb-3">
+                                    <label for="collegeState" class="form-label">State <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="collegeState" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label for="collegePassword" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="collegePassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="collegeConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="collegeConfirmPassword" required>
-                                </div>
-                                <div class="mb-3">
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
                                     <label for="collegeCountry" class="form-label">Country <span class="text-danger">*</span></label>
                                     <select class="form-select" id="collegeCountry" required>
-                                        <option value="" selected disabled>Select Country</option>
+                                        <option value="IN" selected>India</option>
                                         <option value="US">United States</option>
                                         <option value="UK">United Kingdom</option>
                                         <option value="CA">Canada</option>
                                         <option value="AU">Australia</option>
-                                        <option value="IN">India</option>
                                     </select>
                                 </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="collegeTerms" required>
-                                    <label class="form-check-label" for="collegeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                                <div class="col-md-6 mb-3">
+                                    <label for="collegePincode" class="form-label">Pincode/Zipcode <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="collegePincode" required>
                                 </div>
-                                <button type="submit" class="btn btn-primary w-100 py-2">Register as College</button>
-                            </form>
-                        </div>
-                        <div class="tab-pane fade" id="student" role="tabpanel" aria-labelledby="student-tab">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="studentFirstName" class="form-label">First Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="studentFirstName" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="studentLastName" class="form-label">Last Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="studentLastName" required>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="studentEmail" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentPassword" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="studentPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="studentConfirmPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="studentCollege" class="form-label">College/University <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="studentCollege" required>
-                                        <option value="" selected disabled>Select College</option>
-                                        <option>Harvard University</option>
-                                        <option>Stanford University</option>
-                                        <option>MIT</option>
-                                        <option>University of California, Berkeley</option>
-                                        <option>Yale University</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="studentTerms" required>
-                                    <label class="form-check-label" for="studentTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 py-2">Register as Student</button>
-                            </form>
-                        </div>
-                        <div class="tab-pane fade" id="faculty" role="tabpanel" aria-labelledby="faculty-tab">
-                            <form>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="facultyFirstName" class="form-label">First Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="facultyFirstName" required>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="facultyLastName" class="form-label">Last Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="facultyLastName" required>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="facultyEmail" class="form-label">Email <span class="text-danger">*</span></label>
-                                    <input type="email" class="form-control" id="facultyEmail" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="facultyPassword" class="form-label">Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="facultyPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="facultyConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                                    <input type="password" class="form-control" id="facultyConfirmPassword" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="facultyCollege" class="form-label">College/University <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="facultyCollege" required>
-                                        <option value="" selected disabled>Select College</option>
-                                        <option>Harvard University</option>
-                                        <option>Stanford University</option>
-                                        <option>MIT</option>
-                                        <option>University of California, Berkeley</option>
-                                        <option>Yale University</option>
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="facultyDepartment" class="form-label">Department <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="facultyDepartment" required>
-                                </div>
-                                <div class="mb-3 form-check">
-                                    <input type="checkbox" class="form-check-input" id="facultyTerms" required>
-                                    <label class="form-check-label" for="facultyTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 py-2">Register as Faculty</button>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="adminName" class="form-label">Administrator Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="adminName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="adminEmail" class="form-label">Administrator Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="adminEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegePassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="collegePassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="collegeConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="collegeConfirmPassword" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="collegeTerms" required>
+                                <label class="form-check-label" for="collegeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">Register Institution</button>
+                        </form>
                     </div>
-                    <div class="position-relative my-4">
-                        <hr>
-                        <div class="position-absolute top-50 start-50 translate-middle bg-white px-2">or</div>
+                    
+                    <!-- Student Registration -->
+                    <div class="tab-pane fade" id="student" role="tabpanel" aria-labelledby="student-tab">
+                        <form id="studentRegisterForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="studentFirstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="studentFirstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="studentLastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="studentLastName" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="studentEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentRegNumber" class="form-label">Registration Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="studentRegNumber" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentCollege" class="form-label">College/University <span class="text-danger">*</span></label>
+                                <select class="form-select" id="studentCollege" required>
+                                    <option value="" selected disabled>Select Institution</option>
+                                    <!-- Will be populated via API -->
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="studentPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="studentConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="studentConfirmPassword" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="studentTerms" required>
+                                <label class="form-check-label" for="studentTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">Register as Student</button>
+                        </form>
                     </div>
-                    <div class="text-center">
-                        <p class="mb-2">Already have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login here</a></p>
+                    
+                    <!-- Faculty/Staff Registration -->
+                    <div class="tab-pane fade" id="faculty" role="tabpanel" aria-labelledby="faculty-tab">
+                        <form id="facultyRegisterForm">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="facultyFirstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="facultyFirstName" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="facultyLastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="facultyLastName" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="facultyEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="facultyEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="facultyRole" class="form-label">Role <span class="text-danger">*</span></label>
+                                <select class="form-select" id="facultyRole" required>
+                                    <option value="" selected disabled>Select Role</option>
+                                    <option value="teacher">Teacher</option>
+                                    <option value="staff">Staff</option>
+                                    <option value="admin">Administrator</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="facultyCollege" class="form-label">College/University <span class="text-danger">*</span></label>
+                                <select class="form-select" id="facultyCollege" required>
+                                    <option value="" selected disabled>Select Institution</option>
+                                    <!-- Will be populated via API -->
+                                </select>
+                            </div>
+                            <div class="mb-3" id="facultyDepartmentGroup">
+                                <label for="facultyDepartment" class="form-label">Department <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="facultyDepartment">
+                            </div>
+                            <div class="mb-3">
+                                <label for="facultyPassword" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="facultyPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="facultyConfirmPassword" class="form-label">Confirm Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="facultyConfirmPassword" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="facultyTerms" required>
+                                <label class="form-check-label" for="facultyTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">Register as Faculty/Staff</button>
+                        </form>
                     </div>
-                    <div class="d-grid gap-2">
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fab fa-google me-2"></i> Continue with Google
-                        </button>
-                        <button type="button" class="btn btn-outline-primary">
-                            <i class="fab fa-microsoft me-2"></i> Continue with Microsoft
-                        </button>
-                    </div>
+                </div>
+                <div class="position-relative my-4">
+                    <hr>
+                    <div class="position-absolute top-50 start-50 translate-middle bg-white px-2">or</div>
+                </div>
+                <div class="text-center">
+                    <p class="mb-2">Already have an account? <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">Login here</a></p>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="fab fa-google me-2"></i> Continue with Google
+                    </button>
+                    <button type="button" class="btn btn-outline-primary">
+                        <i class="fab fa-microsoft me-2"></i> Continue with Microsoft
+                    </button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Ranking Criteria Modal -->
     <div class="modal fade" id="rankingCriteriaModal" tabindex="-1" aria-labelledby="rankingCriteriaModalLabel" aria-hidden="true">
@@ -1257,6 +1328,200 @@
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Institution registration form
+    const collegeRegisterForm = document.getElementById('collegeRegisterForm');
+    // Student registration form
+    const studentRegisterForm = document.getElementById('studentRegisterForm');
+    // Faculty registration form
+    const facultyRegisterForm = document.getElementById('facultyRegisterForm');
+    
+    // Show/hide department field based on role selection
+    const facultyRole = document.getElementById('facultyRole');
+    const facultyDepartmentGroup = document.getElementById('facultyDepartmentGroup');
+    
+    facultyRole.addEventListener('change', function() {
+        if (this.value === 'teacher') {
+            facultyDepartmentGroup.style.display = 'block';
+            document.getElementById('facultyDepartment').required = true;
+        } else {
+            facultyDepartmentGroup.style.display = 'none';
+            document.getElementById('facultyDepartment').required = false;
+        }
+    });
+    
+    // Load institutions for student and faculty registration
+    async function loadInstitutions() {
+        try {
+            const response = await fetch('/api/institutions');
+            const institutions = await response.json();
+            
+            const studentCollegeSelect = document.getElementById('studentCollege');
+            const facultyCollegeSelect = document.getElementById('facultyCollege');
+            
+            // Clear existing options
+            studentCollegeSelect.innerHTML = '<option value="" selected disabled>Select Institution</option>';
+            facultyCollegeSelect.innerHTML = '<option value="" selected disabled>Select Institution</option>';
+            
+            // Add new options
+            institutions.forEach(institution => {
+                const option = document.createElement('option');
+                option.value = institution.id;
+                option.textContent = `${institution.name} (${institution.code})`;
+                
+                studentCollegeSelect.appendChild(option.cloneNode(true));
+                facultyCollegeSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Failed to load institutions:', error);
+        }
+    }
+    
+    // Load institutions when modal is shown
+    document.getElementById('registerModal').addEventListener('shown.bs.modal', loadInstitutions);
+    
+    // College/Coaching Center Registration
+    collegeRegisterForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validate passwords match
+        if (document.getElementById('collegePassword').value !== document.getElementById('collegeConfirmPassword').value) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        // Prepare data
+        const formData = {
+            type: document.getElementById('collegeType').value,
+            name: document.getElementById('collegeName').value,
+            code: document.getElementById('collegeCode').value,
+            category: document.getElementById('collegeCategory').value,
+            establishedYear: document.getElementById('collegeEstablished').value,
+            email: document.getElementById('collegeEmail').value,
+            phone: document.getElementById('collegePhone').value,
+            website: document.getElementById('collegeWebsite').value,
+            address: document.getElementById('collegeAddress').value,
+            city: document.getElementById('collegeCity').value,
+            state: document.getElementById('collegeState').value,
+            country: document.getElementById('collegeCountry').value,
+            pincode: document.getElementById('collegePincode').value,
+            adminName: document.getElementById('adminName').value,
+            adminEmail: document.getElementById('adminEmail').value,
+            password: document.getElementById('collegePassword').value
+        };
+        
+        try {
+            const response = await fetch('/api/institutions/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert('Institution registered successfully!');
+                // Close modal or redirect
+                bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+            } else {
+                alert(data.message || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('An error occurred during registration');
+        }
+    });
+    
+    // Student Registration
+    studentRegisterForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validate passwords match
+        if (document.getElementById('studentPassword').value !== document.getElementById('studentConfirmPassword').value) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        const formData = {
+            firstName: document.getElementById('studentFirstName').value,
+            lastName: document.getElementById('studentLastName').value,
+            email: document.getElementById('studentEmail').value,
+            regNumber: document.getElementById('studentRegNumber').value,
+            institutionId: document.getElementById('studentCollege').value,
+            password: document.getElementById('studentPassword').value,
+            role: 'student'
+        };
+        
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert('Student registration successful!');
+                bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+            } else {
+                alert(data.message || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('An error occurred during registration');
+        }
+    });
+    
+    // Faculty/Staff Registration
+    facultyRegisterForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Validate passwords match
+        if (document.getElementById('facultyPassword').value !== document.getElementById('facultyConfirmPassword').value) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        const formData = {
+            firstName: document.getElementById('facultyFirstName').value,
+            lastName: document.getElementById('facultyLastName').value,
+            email: document.getElementById('facultyEmail').value,
+            role: document.getElementById('facultyRole').value,
+            institutionId: document.getElementById('facultyCollege').value,
+            department: document.getElementById('facultyDepartment').value,
+            password: document.getElementById('facultyPassword').value
+        };
+        
+        try {
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                alert('Registration successful!');
+                bootstrap.Modal.getInstance(document.getElementById('registerModal')).hide();
+            } else {
+                alert(data.message || 'Registration failed');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            alert('An error occurred during registration');
+        }
+    });
+});
+    </script>
     <script>
         // Initialize tooltips
         document.addEventListener('DOMContentLoaded', function() {

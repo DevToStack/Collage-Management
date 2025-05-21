@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hi-Tech College Registration & Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f4f4f4;
+      color: #333;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 650px;
+      margin: auto;
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 28px;
+      color: #007bff;
+    }
+
+    /* Show only active form */
+    form {
+      display: none;
+    }
+    form.active {
+      display: block;
+    }
+
+    .form-step {
+      display: none;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .form-step.active {
+      display: block;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      outline: none;
+      transition: border 0.3s;
+    }
+
+    input:focus, select:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    .btn-group {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background: #007bff;
+      border: none;
+      color: #fff;
+      padding: 12px 24px;
+      margin: 0 5px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Toggle buttons above forms */
+    .toggle-btns {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+      gap: 15px;
+    }
+
+    .toggle-btn {
+      cursor: pointer;
+      background: #eee;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #007bff;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+
+    .toggle-btn.active {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="toggle-btns">
+    <div id="registerToggle" class="toggle-btn active">Register</div>
+    <div id="loginToggle" class="toggle-btn">Login</div>
+  </div>
+
+  <!-- Registration Form -->
+  <form id="multiStepForm" class="active" novalidate>
+    <h2>Register College</h2>
+
+    <!-- Step 1: College Details -->
+    <div class="form-step active" id="step-1">
+      <div class="form-group">
+        <label>University Type *</label>
+        <select name="universityType" required>
+          <option value="">Select University Type</option>
+          <option value="central">Central</option>
+          <option value="state">State</option>
+          <option value="private">Private</option>
+          <option value="deemed">Deemed</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Institution Code *</label>
+        <input type="text" name="institutionCode" required />
+      </div>
+      <div class="form-group">
+        <label>College/University Name *</label>
+        <input type="text" name="collegeName" required />
+      </div>
+      <div class="form-group">
+        <label>Official Email *</label>
+        <input type="email" name="collegeEmail" required />
+      </div>
+      <div class="form-group">
+        <label>Contact Number *</label>
+        <input type="tel" name="collegeContact" required />
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn" onclick="nextStep(1)">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Admin Info -->
+    <div class="form-step" id="step-2">
+      <div class="form-group">
+        <label>Principal Name *</label>
+        <input type="text" name="principalName" required />
+      </div>
+      <div class="form-group">
+        <label>Principal Contact *</label>
+        <input type="tel" name="principalContact" required />
+      </div>
+      <div class="form-group">
+        <label>Principal Email *</label>
+        <input type="email" name="principalEmail" required />
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn" onclick="prevStep(2)">Back</button>
+        <button type="button" class="btn" onclick="nextStep(2)">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Address Info -->
+    <div class="form-step" id="step-3">
+      <div class="form-group">
+        <label>Area *</label>
+        <input type="text" name="area" required />
+      </div>
+      <div class="form-group">
+        <label>City *</label>
+        <input type="text" name="city" required />
+      </div>
+      <div class="form-group">
+        <label>State *</label>
+        <input type="text" name="state" required />
+      </div>
+      <div class="form-group">
+        <label>Pincode *</label>
+        <input
+          type="text"
+          name="pincode"
+          required
+          pattern="\d{6}"
+          title="Enter 6-digit pincode"
+        />
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn" onclick="prevStep(3)">Back</button>
+        <button type="button" class="btn" onclick="nextStep(3)">Next</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Password & Terms -->
+    <div class="form-step" id="step-4">
+      <div class="form-group">
+        <label>Password *</label>
+        <input type="password" name="password" id="password" required />
+      </div>
+      <div class="form-group">
+        <label>Confirm Password *</label>
+        <input type="password" id="confirmPassword" required />
+      </div>
+      <div class="form-group">
+        <input type="checkbox" id="terms" required />
+        <label for="terms">I agree to the Terms & Privacy Policy</label>
+      </div>
+      <div class="btn-group">
+        <button type="button" class="btn" onclick="prevStep(4)">Back</button>
+        <button type="submit" class="btn">Register</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Login Form -->
+  <form id="loginForm" novalidate>
+    <h2>Login</h2>
+
+    <div class="form-group">
+      <label>Email *</label>
+      <input type="email" name="email" required />
+    </div>
+
+    <div class="form-group">
+      <label>Password *</label>
+      <input type="password" name="password" required />
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" class="btn">Login</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Toggle between register and login forms
+  const registerToggle = document.getElementById('registerToggle');
+  const loginToggle = document.getElementById('loginToggle');
+  const multiStepForm = document.getElementById('multiStepForm');
+  const loginForm = document.getElementById('loginForm');
+
+  registerToggle.addEventListener('click', () => {
+    registerToggle.classList.add('active');
+    loginToggle.classList.remove('active');
+    multiStepForm.classList.add('active');
+    loginForm.classList.remove('active');
+  });
+
+  loginToggle.addEventListener('click', () => {
+    loginToggle.classList.add('active');
+    registerToggle.classList.remove('active');
+    loginForm.classList.add('active');
+    multiStepForm.classList.remove('active');
+  });
+
+  // Multi-step form navigation
+  function nextStep(currentStep) {
+    const step = document.getElementById(`step-${currentStep}`);
+    const inputs = step.querySelectorAll("input, select");
+
+    for (let input of inputs) {
+      if (!input.checkValidity()) {
+        input.reportValidity();
+        return;
+      }
+    }
+
+    step.classList.remove('active');
+    document.getElementById(`step-${currentStep + 1}`).classList.add('active');
+  }
+
+  function prevStep(currentStep) {
+    document.getElementById(`step-${currentStep}`).classList.remove('active');
+    document.getElementById(`step-${currentStep - 1}`).classList.add('active');
+  }
+
+  // Registration form submit
+  multiStepForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+
+    const password = data.password;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const response = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      alert(result.message);
+    } catch (error) {
+      console.error('Registration failed:', error);
+      alert('Error occurred. Try again later.');
+    }
+  });
+
+  // Login form submit
+  loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(loginForm);
+    const data = {};
+
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+console.log(data);
+    try {
+      const response = await fetch('/login/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      alert(result.message);
+
+      if (response.ok) {
+        // Redirect to dashboard or another page
+        window.location.href = '/dashboard';
+      }
+    } catch (error) {
+      console.error('Login failed:', error);
+      alert('Login error. Please check your credentials and try again.');
+    }
+  });
+</script>
+
+</body>
+</html>

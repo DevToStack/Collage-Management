@@ -7,7 +7,8 @@ const adminRoutes = require('./routes/adminRoutes');
 const commonRoutes = require('./routes/commonRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
-
+const registerRoutes = require('./routes/registerRoutes');
+const loginRoutes = require('./routes/adminRoutes')
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -22,6 +23,8 @@ app.use('/admin', adminRoutes); // Check here: /admin/students will be handled b
 app.use("/common",commonRoutes);
 app.use("/student",studentRoutes);
 app.use("/teacher",teacherRoutes);
+app.use('/auth',registerRoutes);
+app.use('/login',loginRoutes);
 
 // Fallback for unmatched routes
 app.use((req, res) => {
