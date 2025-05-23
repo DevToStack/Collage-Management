@@ -21,26 +21,48 @@ console.log('User from auth middleware:', req.user); // Add this line
 
 exports.dashboard = async (req, res) => {
     const db = getDB();
+    const collegeCode = req.user.college_code; // More descriptive variable name
+    
     try {
-        
-        const [[result]] = await db.query(`
+        // Validate college code exists
+        if (!collegeCode) {
+            return res.status(400).json({ error: 'College code is required' });
+        }
+
+        // Single query with parameterized values for security
+        const query = `
             SELECT
-                (SELECT COUNT(*) FROM teachers) AS total_teachers,
-                (SELECT COUNT(*) FROM students) AS total_students,
-                (SELECT COUNT(*) FROM classes) AS total_classes,
-                (SELECT COUNT(*) FROM announcements) AS total_announcements,
-                (SELECT COUNT(*) FROM staff) AS total_staff
-        `);
-        res.json(result);
+                (SELECT COUNT(*) FROM teachers WHERE collage_code = ?) AS total_teachers,
+                (SELECT COUNT(*) FROM students WHERE collage_code = ?) AS total_students,
+                (SELECT COUNT(*) FROM classes WHERE collage_code = ?) AS total_classes,
+                (SELECT COUNT(*) FROM announcements WHERE collage_code = ?) AS total_announcements,
+                (SELECT COUNT(*) FROM staff WHERE collage_code = ?) AS total_staff
+        `;
+        
+        // Execute query with parameter binding
+        const [results] = await db.query(query, [collegeCode, collegeCode, collegeCode, collegeCode, collegeCode]);
+        
+        // Check if we got results (should always get one row, but good to verify)
+        if (!results || results.length === 0) {
+            return res.status(404).json({ error: 'No data found for this college' });
+        }
+
+        // Return the first (and only) row of results
+        res.json(results[0]);
+        
     } catch (err) {
-        res.status(500).json({ error: 'Admin dashboard error' });
+        console.error('Dashboard error:', err); // Log the actual error for debugging
+        res.status(500).json({ 
+            error: 'Failed to fetch dashboard data',
+            details: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
     }
 };
 
 exports.getAllTeachers = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM teachers`);
+        const [rows] = await db.query(`SELECT * FROM teachers where college_code= ? `,[req.user.college_code]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Teachers fetch error' });
