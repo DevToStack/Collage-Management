@@ -11,7 +11,6 @@ router.get('/staff', adminController.getAllStaff);
 router.get('/classes', adminController.getAllClasses);
 router.get('/activities', adminController.getActivities);
 
-
 //POST
 router.post('/students',adminController.addStudent)
 

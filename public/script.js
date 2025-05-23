@@ -90,3 +90,75 @@ document.addEventListener('DOMContentLoaded', function () {
     updateDashboardCounts();
     loadStudents();
 });
+function nextStep(currentStep) {
+  const step = document.getElementById(`step-${currentStep}`);
+  const inputs = step.querySelectorAll("input, select");
+
+  for (let input of inputs) {
+    if (!input.checkValidity()) {
+      input.reportValidity();
+      return;
+    }
+  }
+
+  step.classList.remove('active');
+  document.getElementById(`step-${currentStep + 1}`).classList.add('active');
+}
+
+function prevStep(currentStep) {
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.getElementById(`step-${currentStep - 1}`).classList.add('active');
+}
+
+// Handle registration form submit
+const multiStepForm = document.getElementById('multiStepForm');
+if (multiStepForm) {
+  multiStepForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(multiStepForm);
+    const data = {};
+    formData.forEach((v, k) => (data[k] = v));
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    if (data.password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+    }
+
+    try {
+      const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.message || "Registered successfully");
+    } catch (error) {
+      alert("Registration failed.");
+    }
+  });
+}
+
+// Handle login form submit
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(loginForm);
+    const data = {};
+    formData.forEach((v, k) => (data[k] = v));
+
+    try {
+      const res = await fetch('/login/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+      alert(result.message || "Logged in successfully");
+    } catch (error) {
+      alert("Login failed.");
+    }
+  });
+}

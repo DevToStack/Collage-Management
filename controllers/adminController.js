@@ -1,5 +1,24 @@
 const { getDB } = require('../database');
 
+exports.getProfile = async (req, res) => {
+  try {
+    const db = getDB();
+console.log('User from auth middleware:', req.user); // Add this line
+    // You get userId from JWT middleware: req.user
+    const [rows] = await db.query('SELECT user_id, full_name, email, role FROM users WHERE user_id = ?', [req.user.userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(rows[0]);
+  } catch (err) {
+    console.error('Error fetching user profile:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 exports.dashboard = async (req, res) => {
     const db = getDB();
     try {

@@ -8,7 +8,7 @@ const commonRoutes = require('./routes/commonRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const registerRoutes = require('./routes/registerRoutes');
-const loginRoutes = require('./routes/adminRoutes')
+const loginRoutes = require('./routes/loginRoutes');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,12 +19,12 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
-app.use('/admin', adminRoutes); // Check here: /admin/students will be handled by this route
-app.use("/common",commonRoutes);
-app.use("/student",studentRoutes);
-app.use("/teacher",teacherRoutes);
-app.use('/auth',registerRoutes);
-app.use('/login',loginRoutes);
+app.use('/api/admin', adminRoutes); // Check here: /admin/students will be handled by this route
+app.use("/api/common",commonRoutes);
+app.use("/api/student",studentRoutes);
+app.use("/api/teacher",teacherRoutes);
+app.use('/api/auth',registerRoutes);
+app.use('/api/login',loginRoutes);
 
 // Fallback for unmatched routes
 app.use((req, res) => {

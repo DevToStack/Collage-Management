@@ -190,5 +190,52 @@
             </div>
         </div>
     </div>
+    <script>
+        // dashboard.js
+
+// Check if token exists
+const token = localStorage.getItem('token');
+
+if (!token) {
+  alert('You are not logged in. Redirecting to login page.');
+  window.location.href = '/login.html'; // Adjust based on your routing
+}
+
+// Call protected API with token
+async function loadDashboard() {
+  try {
+    const response = await fetch('http://localhost:3000/api/dashboard', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (response.status === 401) {
+      alert('Session expired or unauthorized. Please log in again.');
+      localStorage.removeItem('token');
+      window.location.href = '/login.html';
+      return;
+    }
+
+    const data = await response.json();
+
+    // Display user info
+    document.getElementById('userName').textContent = data.user.name;
+    document.getElementById('userEmail').textContent = data.user.email;
+    document.getElementById('userRole').textContent = data.user.role;
+
+    // You can loop through data to populate tables/cards etc.
+    console.log('Dashboard Data:', data);
+
+  } catch (error) {
+    console.error('Error loading dashboard:', error);
+    alert('Failed to load dashboard');
+  }
+}
+
+loadDashboard();
+
+    </script>
 </body>
 </html>
