@@ -811,7 +811,40 @@ button {
 .theme-options button:hover {
     background-color: var(--active-bg);
 }
+.profile-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    min-width: 160px;
+    z-index: 1000;
+}
 
+.profile-dropdown.show {
+    display: block;
+}
+
+.profile-dropdown a {
+    display: block;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+}
+
+.profile-dropdown a:hover {
+    background: #f5f5f5;
+}
+
+.user-profile {
+    position: relative;
+    cursor: pointer;
+}
+.profile-dropdown {
+    z-index: 9999 !important;
+}
 /* ==================== */
 /* RESPONSIVE STYLES    */
 /* ==================== */

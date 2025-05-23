@@ -3,9 +3,12 @@ const { getDB } = require('../database');
 exports.getProfile = async (req, res) => {
   try {
     const db = getDB();
-console.log('User from auth middleware:', req.user); // Add this line
-    // You get userId from JWT middleware: req.user
-    const [rows] = await db.query('SELECT user_id, full_name, email, role FROM users WHERE user_id = ?', [req.user.userId]);
+    console.log('User from auth middleware:', req.user); // Debugging
+
+    const [rows] = await db.query(
+      'SELECT user_id, full_name, email, role, college_code FROM users WHERE user_id = ?', 
+      [req.user.user_id] // Changed to user_id to match your schema
+    );
 
     if (rows.length === 0) {
       return res.status(404).json({ message: 'User not found' });
@@ -18,40 +21,46 @@ console.log('User from auth middleware:', req.user); // Add this line
   }
 };
 
-
 exports.dashboard = async (req, res) => {
     const db = getDB();
-    const collegeCode = req.user.college_code; // More descriptive variable name
+    const collegeCode = req.user.college_code; // Fixed typo from "collage" to "college"
     
     try {
-        // Validate college code exists
         if (!collegeCode) {
             return res.status(400).json({ error: 'College code is required' });
         }
 
-        // Single query with parameterized values for security
         const query = `
             SELECT
-                (SELECT COUNT(*) FROM teachers WHERE collage_code = ?) AS total_teachers,
-                (SELECT COUNT(*) FROM students WHERE collage_code = ?) AS total_students,
-                (SELECT COUNT(*) FROM classes WHERE collage_code = ?) AS total_classes,
-                (SELECT COUNT(*) FROM announcements WHERE collage_code = ?) AS total_announcements,
-                (SELECT COUNT(*) FROM staff WHERE collage_code = ?) AS total_staff
+                (SELECT COUNT(*) FROM teachers t 
+                JOIN users u ON t.user_id = u.user_id 
+                WHERE u.college_code = ?) AS total_teachers,
+                
+                (SELECT COUNT(*) FROM students 
+                WHERE college_code = ?) AS total_students,
+                
+                (SELECT COUNT(*) FROM classes 
+                WHERE college_code = ?) AS total_classes,
+                
+                (SELECT COUNT(*) FROM announcements 
+                WHERE college_code = ?) AS total_announcements,
+                
+                (SELECT COUNT(*) FROM staff s 
+                JOIN users u ON s.user_id = u.user_id 
+                WHERE u.college_code = ?) AS total_staff;
         `;
         
-        // Execute query with parameter binding
-        const [results] = await db.query(query, [collegeCode, collegeCode, collegeCode, collegeCode, collegeCode]);
+        const [results] = await db.query(query, 
+          [collegeCode, collegeCode, collegeCode, collegeCode, collegeCode]);
         
-        // Check if we got results (should always get one row, but good to verify)
         if (!results || results.length === 0) {
             return res.status(404).json({ error: 'No data found for this college' });
         }
 
-        // Return the first (and only) row of results
         res.json(results[0]);
         
     } catch (err) {
-        console.error('Dashboard error:', err); // Log the actual error for debugging
+        console.error('Dashboard error:', err);
         res.status(500).json({ 
             error: 'Failed to fetch dashboard data',
             details: process.env.NODE_ENV === 'development' ? err.message : undefined
@@ -62,7 +71,12 @@ exports.dashboard = async (req, res) => {
 exports.getAllTeachers = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM teachers where college_code= ? `,[req.user.college_code]);
+        const [rows] = await db.query(`
+            SELECT t.*, u.full_name, u.email 
+            FROM teachers t
+            JOIN users u ON t.user_id = u.user_id
+            WHERE u.college_code = ?
+        `, [req.user.college_code]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Teachers fetch error' });
@@ -72,7 +86,10 @@ exports.getAllTeachers = async (req, res) => {
 exports.getAllStudents = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM students`);
+        const [rows] = await db.query(`
+            SELECT * FROM students 
+            WHERE college_code = ?
+        `, [req.user.college_code]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Students fetch error' });
@@ -82,7 +99,10 @@ exports.getAllStudents = async (req, res) => {
 exports.getAllClasses = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM classes`);
+        const [rows] = await db.query(`
+            SELECT * FROM classes 
+            WHERE college_code = ?
+        `, [req.user.college_code]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Classes fetch error' });
@@ -92,35 +112,58 @@ exports.getAllClasses = async (req, res) => {
 exports.getAllStaff = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM staff`);
+        const [rows] = await db.query(`
+            SELECT s.*, u.full_name, u.email 
+            FROM staff s
+            JOIN users u ON s.user_id = u.user_id
+            WHERE u.college_code = ?
+        `, [req.user.college_code]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Staff fetch error' });
     }
 };
+
 exports.getActivities = async (req, res) => {
     const db = getDB();
     try {
-        const [rows] = await db.query(`SELECT * FROM admin_activities`);
+        const [rows] = await db.query(`
+            SELECT * FROM activities 
+            WHERE college_code = ?
+            ORDER BY created_at DESC
+            LIMIT 50
+        `, [req.user.college_code]);
         res.json(rows);
     } catch (err) {
-        res.status(500).json({ error: 'activities fetch error' });
+        res.status(500).json({ error: 'Activities fetch error' });
     }
 };
 
 exports.addStudent = async (req, res) => {
     const db = getDB();
-    const { name, email, grade } = req.query;
+    const { 
+        full_name, 
+        email, 
+        college_code,
+        dob,
+        // Add all other required fields from your students table
+    } = req.body; // Changed from req.query to req.body for better practice
 
-    if (!name || !email || !grade) {
+    if (!full_name || !email || !college_code || !dob) {
         return res.status(400).json({ message: 'Missing required fields.' });
     }
 
     try {
-        const values = [name, email, grade];
-        const query = await db.query(`INSERT INTO students (name, email, grade) VALUES (?, ?, ?)`,values);
+        const [result] = await db.query(`
+            INSERT INTO students 
+            (full_name, email, college_code, dob, created_at)
+            VALUES (?, ?, ?, ?, NOW())
+        `, [full_name, email, college_code, dob]);
 
-        res.status(201).json({ message: 'Student added successfully.' });
+        res.status(201).json({ 
+            message: 'Student added successfully.',
+            student_id: result.insertId
+        });
     } catch (error) {
         console.error('DB Error:', error);
         res.status(500).json({ message: 'Failed to add student.' });
