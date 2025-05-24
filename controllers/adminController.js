@@ -3,7 +3,6 @@ const { getDB } = require('../database');
 exports.getProfile = async (req, res) => {
   try {
     const db = getDB();
-    console.log('User from auth middleware:', req.user); // Debugging
 
     const [rows] = await db.query(
       'SELECT user_id, full_name, email, role, college_code FROM users WHERE user_id = ?', 
@@ -129,10 +128,10 @@ exports.getActivities = async (req, res) => {
     try {
         const [rows] = await db.query(`
             SELECT * FROM activities 
-            WHERE college_code = ?
+            WHERE user_id = ?
             ORDER BY created_at DESC
             LIMIT 50
-        `, [req.user.college_code]);
+        `, [req.user.user_id]);
         res.json(rows);
     } catch (err) {
         res.status(500).json({ error: 'Activities fetch error' });
@@ -167,5 +166,20 @@ exports.addStudent = async (req, res) => {
     } catch (error) {
         console.error('DB Error:', error);
         res.status(500).json({ message: 'Failed to add student.' });
+    }
+};
+
+exports.getAnnouncements = async (req, res) => {
+    const db = getDB();
+    try {
+        const [rows] = await db.query(`
+            SELECT * FROM announcements 
+            WHERE college_code = ?
+            ORDER BY created_at DESC
+            LIMIT 50
+        `, [req.user.college_code]);
+        res.json(rows);
+    } catch (err) {
+        res.status(500).json({ error: 'Announcements fetch error' });
     }
 };

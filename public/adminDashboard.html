@@ -39,11 +39,11 @@
             <!-- Header -->
             <div class="header">
                 <h1 id="dashboard-heading">Admin Dashboard</h1>
-                <div class="user-profile" onclick="showProfile()" role="button" aria-haspopup="true" aria-expanded="true" aria-label="User profile">
+                <div class="user-profile" onclick="showProfile()" role="button" aria-haspopup="true" aria-expanded="false" aria-label="User profile">
                     <img id="user-avatar" src="https://ui-avatars.com/api/?name=Admin+User&background=4361ee&color=fff" alt="Admin User">
                     <div class="user-info">
-                        <h4 id="user-name">Admin User</h4>
-                        <p id="user-role">Administrator</p>
+                        <h4 id="user-name"></h4>
+                        <p id="user-role"></p>
                     </div>
                 </div>
                 <div id="profile-dropdown" class="profile-dropdown">  <!-- Removed style attribute -->
@@ -355,6 +355,13 @@
             </div>
             <div class="modal-body">
                 <form id="profile-form">
+                    <div class="theme-switcher">
+                        <label >Select Theme</label>
+                        <button data-theme="light">Light</button>
+                        <button data-theme="dark">Dark</button>
+                        <button data-theme="high-contrast">High Contrast</button>
+                        <button data-theme="blue">Blue</button>
+                    </div>
                     <div class="form-group">
                         <label for="profile-name">Name</label>
                         <input type="text" id="profile-name" required aria-required="true">
@@ -451,7 +458,6 @@
             try {
                 const user = await fetchData('/login/profile');
                 currentUser = user;
-                console.log('User data:', user); // Debug log
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 
                 // Update UI with user info - using full_name from API response
@@ -479,28 +485,7 @@
         function setupEventListeners() {
             try {
                 // Profile dropdown toggle
-                const userProfile = document.querySelector('.user-profile');
-                if (userProfile) {
-                    userProfile.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        const dropdown = document.getElementById('profile-dropdown');
-                        if (dropdown) {
-                            const isExpanded = dropdown.classList.toggle('show');
-                            userProfile.setAttribute('aria-expanded', isExpanded);
-                        }
-                    });
-                }
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function() {
-                    const dropdown = document.getElementById('profile-dropdown');
-                    if (dropdown) {
-                        dropdown.classList.remove('show');
-                        const userProfile = document.querySelector('.user-profile');
-                        if (userProfile) userProfile.setAttribute('aria-expanded', 'false');
-                    }
-                });
-
+               
                 // Safely add form event listeners
                 const addFormListener = (formId, handler) => {
                     const form = document.getElementById(formId);
@@ -625,11 +610,7 @@
             if (form) form.reset();
         }
 
-        function showProfile() {
-            const dropdown = document.getElementById('profile-dropdown');
-            const isExpanded = dropdown.classList.toggle('show');
-            document.querySelector('.user-profile').setAttribute('aria-expanded', isExpanded);
-        }
+        
 
         function showProfileModal() {
             // Populate profile form with current user data
@@ -1086,7 +1067,24 @@ document.addEventListener('DOMContentLoaded', function() {
 });
         // Initialize the dashboard when DOM is loaded
         document.addEventListener('DOMContentLoaded', initDashboard);
-        document.getElementById('profile-dropdown').classList.toggle('show')
+        
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const profile = document.querySelector('.user-profile');
+        const dropdown = document.querySelector('.profile-dropdown');
+
+        document.addEventListener('click', function (event) {
+            const isClickInside = profile.contains(event.target);
+            if (isClickInside) {
+                dropdown.classList.toggle('show');
+            } else {
+                dropdown.classList.remove('show');
+            }
+        });
+    });
+</script>
+
+
 </body>
 </html>
