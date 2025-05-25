@@ -53,3 +53,24 @@ exports.registerCollege = async (req, res) => {
     res.status(500).json({ message: 'Server error.' });
   }
 };
+exports.registerTeacher = async (req, res) => {
+  const db = getDB();
+  const { full_name, email, password, phone, college_code, role } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await db.execute(
+      `INSERT INTO users (college_code, full_name, email, password, mobile_number, role)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [college_code, full_name, email, hashedPassword, phone, role]
+    );
+
+    res.status(201).json({
+      message: 'User registered successfully.'
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error.' });
+  }
+};

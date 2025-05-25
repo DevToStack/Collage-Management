@@ -1,18 +1,17 @@
 const express = require('express');
-const auth = require('../middleware/auth');
+const { authenticate } = require('../middleware/auth');  // Destructure here
 const router = express.Router();
 const adminController = require('../controllers/adminController');
 
+router.get('/dashboard', authenticate, adminController.dashboard);
+router.get('/teachers', authenticate, adminController.getAllTeachers);
+router.get('/students', authenticate, adminController.getAllStudents);
+router.get('/staff', authenticate, adminController.getAllStaff);
+router.get('/classes', authenticate, adminController.getAllClasses);
+router.get('/activities', authenticate, adminController.getActivities);
+router.get('/announcements', authenticate, adminController.getAnnouncements);
 
-//GET
-router.get('/dashboard',auth, adminController.dashboard);
-router.get('/teachers', auth, adminController.getAllTeachers);
-router.get('/students',auth, adminController.getAllStudents);
-router.get('/staff', auth, adminController.getAllStaff);
-router.get('/classes', auth, adminController.getAllClasses);
-router.get('/activities', auth, adminController.getActivities);
-router.get('/announcements', auth, adminController.getAnnouncements);
-//POST
-router.post('/students',adminController.addStudent)
+// POST routes
+router.post('/students', authenticate, adminController.addStudent);
 
 module.exports = router;

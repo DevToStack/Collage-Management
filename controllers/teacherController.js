@@ -1,18 +1,63 @@
-// controllers/teacherController.js
-const { getDB } = require('../database'); // replace with your DB connection logic
+const { getDB } = require('../database');
 
-const teacherController = {
-    
-    getDashboardData: async (req, res) => {
+
+exports.getDashboardData = async (req, res) => {
         const db = getDB();
-        const { teacherId } = req.query;
+        const { userId } = req.user; // Assuming user info is in req.user from auth middleware
+        
         try {
-            const [students] = await db.query('SELECT COUNT(*) as count FROM students WHERE teacher_id = ?', [teacherId]);
-            const [classes] = await db.query('SELECT COUNT(*) as count FROM classes WHERE class_teacher_id = ?', [teacherId]);
-            const [assignments] = await db.query('SELECT COUNT(*) as count FROM assignments WHERE teacher_id = ?', [teacherId]);
-            const [announcements] = await db.query('SELECT COUNT(*) as count FROM announcements WHERE teacher_id = ?', [teacherId]);
-            const [activities] = await db.query('SELECT * FROM activities WHERE user_id = ? ORDER BY created_at DESC', [teacherId]);
-            const [todayClasses] = await db.query('SELECT * FROM classes WHERE teacher_id = ? AND DATE(schedule) = CURDATE()', [teacherId]);
+            // Get teacher info first
+            const [teacher] = await db.query('SELECT * FROM teachers WHERE user_id = ?', [userId]);
+            if (!teacher.length) {
+                return res.status(404).json({ error: 'Teacher not found' });
+            }
+            const teacherId = teacher[0].teacher_id;
+
+            // Get counts for dashboard
+            const [classes] = await db.query(`
+                SELECT COUNT(*) as count 
+                FROM classes 
+                WHERE class_teacher_id = ?`, 
+                [userId]
+            );
+
+            const [students] = await db.query(`
+                SELECT COUNT(*) as count 
+                FROM class_students cs
+                JOIN classes c ON cs.class_id = c.class_id
+                WHERE c.class_teacher_id = ?`, 
+                [userId]
+            );
+
+            const [assignments] = await db.query(`
+                SELECT COUNT(*) as count 
+                FROM assignments 
+                WHERE created_by = ?`, 
+                [userId]
+            );
+
+            const [announcements] = await db.query(`
+                SELECT COUNT(*) as count 
+                FROM announcements 
+                WHERE created_by = ?`, 
+                [userId]
+            );
+
+            const [activities] = await db.query(`
+                SELECT * FROM activities 
+                WHERE user_id = ? 
+                ORDER BY created_at DESC 
+                LIMIT 10`, 
+                [userId]
+            );
+
+            const [todayClasses] = await db.query(`
+                SELECT c.* 
+                FROM classes c
+                JOIN class_teachers ct ON c.class_id = ct.class_id
+                WHERE ct.teacher_id = ?`, 
+                [userId]
+            );
 
             res.json({
                 counts: {
@@ -21,158 +66,353 @@ const teacherController = {
                     assignments: assignments[0].count,
                     announcements: announcements[0].count
                 },
+                teacher: teacher[0],
                 activities,
                 classes: todayClasses
             });
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    getClasses: async (req, res) => {
+exports.getClasses= async (req, res) => {
         const db = getDB();
-        const { teacherId } = req.query;
+        const { userId } = req.user;
+        
         try {
-            const [rows] = await db.query('SELECT * FROM classes WHERE teacher_id = ?', [teacherId]);
+            const [rows] = await db.query(`
+                SELECT c.* 
+                FROM classes c
+                JOIN class_teachers ct ON c.class_id = ct.class_id
+                WHERE ct.teacher_id = ?`, 
+                [userId]
+            );
             res.json(rows);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    getClass: async (req, res) => {
+exports.getClass= async (req, res) => {
         const db = getDB();
         const { id } = req.params;
+        const { userId } = req.user;
+        
         try {
-            const [rows] = await db.query('SELECT * FROM classes WHERE id = ?', [id]);
+            const [rows] = await db.query(`
+                SELECT c.* 
+                FROM classes c
+                JOIN class_teachers ct ON c.class_id = ct.class_id
+                WHERE c.class_id = ? AND ct.teacher_id = ?`, 
+                [id, userId]
+            );
+            
+            if (!rows.length) {
+                return res.status(404).json({ error: 'Class not found or not authorized' });
+            }
+            
             res.json(rows[0]);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    saveClass: async (req, res) => {
-        const db = getDB();
-        const cls = req.body;
-        try {
-            if (cls.id) {
-                await db.query('UPDATE classes SET name=?, grade_level=?, schedule=?, room_number=? WHERE id=?',
-                    [cls.name, cls.grade_level, cls.schedule, cls.room_number, cls.id]);
-                res.json({ message: 'Class updated' });
-            } else {
-                await db.query('INSERT INTO classes (name, grade_level, schedule, room_number, teacher_id) VALUES (?, ?, ?, ?, ?)',
-                    [cls.name, cls.grade_level, cls.schedule, cls.room_number, cls.teacher_id]);
-                res.json({ message: 'Class created' });
-            }
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
-    deleteClass: async (req, res) => {
-        const db = getDB();
-        const { id } = req.params;
-        try {
-            await db.query('DELETE FROM classes WHERE id = ?', [id]);
-            res.json({ message: 'Class deleted' });
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
-    // Repeat same pattern for assignments
-    getAssignments: async (req, res) => {
-        const db = getDB();
-        const { teacherId } = req.query;
-        try {
-            const [rows] = await db.query('SELECT * FROM assignments WHERE teacher_id = ?', [teacherId]);
-            res.json(rows);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
-    saveAssignment: async (req, res) => {
-        const db = getDB();
-        const assignment = req.body;
-        try {
-            if (assignment.id) {
-                await db.query('UPDATE assignments SET title=?, description=?, due_date=? WHERE id=?',
-                    [assignment.title, assignment.description, assignment.due_date, assignment.id]);
-                res.json({ message: 'Assignment updated' });
-            } else {
-                await db.query('INSERT INTO assignments (title, description, due_date, teacher_id) VALUES (?, ?, ?, ?)',
-                    [assignment.title, assignment.description, assignment.due_date, assignment.teacher_id]);
-                res.json({ message: 'Assignment created' });
-            }
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
-    deleteAssignment: async (req, res) => {
-        const db = getDB();
-        const { id } = req.params;
-        try {
-            await db.query('DELETE FROM assignments WHERE id = ?', [id]);
-            res.json({ message: 'Assignment deleted' });
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-    },
-
-    // Student Listing
-    getStudentsByClassId: async (req, res) => {
+exports.getStudentsByClassId= async (req, res) => {
         const db = getDB();
         const { classId } = req.params;
+        const { userId } = req.user;
+        
         try {
-            const [students] = await db.query('SELECT * FROM students WHERE class_id = ?', [classId]);
+            // Verify teacher has access to this class
+            const [classCheck] = await db.query(`
+                SELECT 1 
+                FROM class_teachers 
+                WHERE class_id = ? AND teacher_id = ?`, 
+                [classId, userId]
+            );
+            
+            if (!classCheck.length) {
+                return res.status(403).json({ error: 'Not authorized to view this class' });
+            }
+
+            const [students] = await db.query(`
+                SELECT s.* 
+                FROM students s
+                JOIN class_students cs ON s.student_id = cs.student_id
+                WHERE cs.class_id = ?`, 
+                [classId]
+            );
+            
             res.json(students);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    // Announcements
-    getAnnouncements: async (req, res) => {
+exports.getAssignments=async (req, res) => {
         const db = getDB();
-        const { userId } = req.query;
+        const { userId } = req.user;
+        
         try {
-            const [announcements] = await db.query('SELECT * FROM announcements WHERE teacher_id = ?', [userId]);
-            res.json(announcements);
+            const [rows] = await db.query(`
+                SELECT a.*, c.course_name, c.department, c.semester 
+                FROM assignments a
+                JOIN classes c ON a.class_id = c.class_id
+                JOIN class_teachers ct ON c.class_id = ct.class_id
+                WHERE a.created_by = ? AND ct.teacher_id = ?
+                ORDER BY a.due_date DESC`, 
+                [userId, userId]
+            );
+            
+            res.json(rows);
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    saveAnnouncement: async (req, res) => {
+exports.saveAssignment=async (req, res) => {
         const db = getDB();
-        const announcement = req.body;
+        const { userId } = req.user;
+        const assignment = req.body;
+        
         try {
-            if (announcement.id) {
-                await db.query('UPDATE announcements SET title=?, content=? WHERE id=?',
-                    [announcement.title, announcement.content, announcement.id]);
-                res.json({ message: 'Announcement updated' });
+            // Verify teacher has access to the class they're assigning to
+            const [classCheck] = await db.query(`
+                SELECT 1 
+                FROM class_teachers 
+                WHERE class_id = ? AND teacher_id = ?`, 
+                [assignment.class_id, userId]
+            );
+            
+            if (!classCheck.length) {
+                return res.status(403).json({ error: 'Not authorized to assign to this class' });
+            }
+
+            if (assignment.assignment_id) {
+                await db.query(`
+                    UPDATE assignments 
+                    SET class_id=?, subject=?, title=?, description=?, due_date=? 
+                    WHERE assignment_id=? AND created_by=?`,
+                    [
+                        assignment.class_id, 
+                        assignment.subject,
+                        assignment.title, 
+                        assignment.description, 
+                        assignment.due_date, 
+                        assignment.assignment_id,
+                        userId
+                    ]
+                );
+                res.json({ message: 'Assignment updated' });
             } else {
-                await db.query('INSERT INTO announcements (title, content, teacher_id) VALUES (?, ?, ?)',
-                    [announcement.title, announcement.content, announcement.teacher_id]);
-                res.json({ message: 'Announcement created' });
+                const [result] = await db.query(`
+                    INSERT INTO assignments 
+                    (class_id, subject, title, description, due_date, created_by) 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
+                    [
+                        assignment.class_id,
+                        assignment.subject,
+                        assignment.title, 
+                        assignment.description, 
+                        assignment.due_date, 
+                        userId
+                    ]
+                );
+                res.json({ 
+                    message: 'Assignment created',
+                    assignment_id: result.insertId 
+                });
             }
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    },
+    };
 
-    deleteAnnouncement: async (req, res) => {
+exports.deleteAssignment= async (req, res) => {
         const db = getDB();
         const { id } = req.params;
+        const { userId } = req.user;
+        
         try {
-            await db.query('DELETE FROM announcements WHERE id = ?', [id]);
+            const [result] = await db.query(`
+                DELETE FROM assignments 
+                WHERE assignment_id = ? AND created_by = ?`, 
+                [id, userId]
+            );
+            
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Assignment not found or not authorized' });
+            }
+            
+            res.json({ message: 'Assignment deleted' });
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    };
+
+exports.getAnnouncements= async (req, res) => {
+        const db = getDB();
+        const { userId } = req.user;
+        
+        try {
+            const [announcements] = await db.query(`
+                SELECT * FROM announcements 
+                WHERE created_by = ? 
+                ORDER BY created_at DESC`, 
+                [userId]
+            );
+            
+            res.json(announcements);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    };
+
+exports.saveAnnouncement=async (req, res) => {
+        const db = getDB();
+        const { userId, college_code } = req.user; // Assuming college_code is in user object
+        const announcement = req.body;
+        
+        try {
+            if (announcement.announcement_id) {
+                await db.query(`
+                    UPDATE announcements 
+                    SET title=?, description=?, target_audience=? 
+                    WHERE announcement_id=? AND created_by=?`,
+                    [
+                        announcement.title, 
+                        announcement.description, 
+                        announcement.target_audience,
+                        announcement.announcement_id,
+                        userId
+                    ]
+                );
+                res.json({ message: 'Announcement updated' });
+            } else {
+                const [result] = await db.query(`
+                    INSERT INTO announcements 
+                    (college_code, title, description, target_audience, created_by) 
+                    VALUES (?, ?, ?, ?, ?)`,
+                    [
+                        college_code,
+                        announcement.title, 
+                        announcement.description, 
+                        announcement.target_audience,
+                        userId
+                    ]
+                );
+                res.json({ 
+                    message: 'Announcement created',
+                    announcement_id: result.insertId 
+                });
+            }
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    };
+
+exports.deleteAnnouncement= async (req, res) => {
+        const db = getDB();
+        const { id } = req.params;
+        const { userId } = req.user;
+        
+        try {
+            const [result] = await db.query(`
+                DELETE FROM announcements 
+                WHERE announcement_id = ? AND created_by = ?`, 
+                [id, userId]
+            );
+            
+            if (result.affectedRows === 0) {
+                return res.status(404).json({ error: 'Announcement not found or not authorized' });
+            }
+            
             res.json({ message: 'Announcement deleted' });
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    }
-};
+    };
 
-module.exports = teacherController;
+    // Additional methods for your schema
+exports.getClassAttendance=async (req, res) => {
+        const db = getDB();
+        const { classId } = req.params;
+        const { userId } = req.user;
+        
+        try {
+            // Verify teacher has access to this class
+            const [classCheck] = await db.query(`
+                SELECT 1 
+                FROM class_teachers 
+                WHERE class_id = ? AND teacher_id = ?`, 
+                [classId, userId]
+            );
+            
+            if (!classCheck.length) {
+                return res.status(403).json({ error: 'Not authorized to view this class' });
+            }
+
+            const [attendance] = await db.query(`
+                SELECT a.*, s.full_name 
+                FROM attendance a
+                JOIN students s ON a.student_id = s.student_id
+                WHERE a.class_id = ?
+                ORDER BY a.date DESC`, 
+                [classId]
+            );
+            
+            res.json(attendance);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    };
+
+exports.recordAttendance=async (req, res) => {
+        const db = getDB();
+        const { classId } = req.params;
+        const { userId } = req.user;
+        const { date, records } = req.body; // records = [{student_id, status}]
+        
+        try {
+            // Verify teacher has access to this class
+            const [classCheck] = await db.query(`
+                SELECT 1 
+                FROM class_teachers 
+                WHERE class_id = ? AND teacher_id = ?`, 
+                [classId, userId]
+            );
+            
+            if (!classCheck.length) {
+                return res.status(403).json({ error: 'Not authorized to record attendance for this class' });
+            }
+
+            await db.beginTransaction();
+            
+            try {
+                // Delete existing records for this date/class to prevent duplicates
+                await db.query(`
+                    DELETE FROM attendance 
+                    WHERE class_id = ? AND date = ?`, 
+                    [classId, date]
+                );
+                
+                // Insert new records
+                for (const record of records) {
+                    await db.query(`
+                        INSERT INTO attendance 
+                        (class_id, student_id, date, status) 
+                        VALUES (?, ?, ?, ?)`,
+                        [classId, record.student_id, date, record.status]
+                    );
+                }
+                
+                await db.commit();
+                res.json({ message: 'Attendance recorded successfully' });
+            } catch (err) {
+                await db.rollback();
+                throw err;
+            }
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    };

@@ -656,7 +656,7 @@ button {
 /* ==================== */
 /* RECENT ACTIVITY       */
 /* ==================== */
-.recent-activity {
+.recent-activity, .classes-section{
     background-color: var(--card-bg);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
@@ -666,20 +666,20 @@ button {
     border: 1px solid var(--border-color);
 }
 
-.recent-activity:hover {
+.recent-activity:hover, .classes-section:hover{
     box-shadow: 0 10px 20px var(--shadow-color);
 }
 
-.recent-activity .section-header {
+.recent-activity .section-header, .classes-section{
     margin-bottom: 15px;
 }
 
-.recent-activity .section-header h2 {
+.recent-activity .section-header h2 ,.classes-section{
     font-size: 20px;
     color: var(--text-color);
 }
 
-.recent-activity .section-header a {
+.recent-activity .section-header a ,.classes-section{
     font-size: 14px;
     color: var(--primary-color);
     padding: 5px 10px;

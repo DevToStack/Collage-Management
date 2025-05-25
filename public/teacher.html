@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register as Teacher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: auto;
+    }
+
+    input, select, button {
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    .message {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Teacher Registration</h2>
+  <form id="registerForm">
+    <input type="text" id="full_name" placeholder="Full Name" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="password" id="password" placeholder="Password" required />
+    <input type="tel" id="phone-number" placeholder="Phone number" required />
+    <input type="text" id="college_code" placeholder="College Code" required />
+    <button type="submit">Register</button>
+  </form>
+
+  <div class="message" id="message"></div>
+
+  <script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const full_name = document.getElementById('full_name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const college_code = document.getElementById('college_code').value;
+      const phone = document.getElementById('phone-number').value;
+      const role = 'teacher'; // Hardcoded role
+
+      try {
+        const response = await fetch('http://localhost:3000/api/auth/register/teacher', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            full_name,
+            email,
+            password,
+            college_code,
+            phone,
+            role
+          })
+        });
+
+        const result = await response.json();
+        const messageDiv = document.getElementById('message');
+
+        if (response.ok) {
+          messageDiv.style.color = 'green';
+          messageDiv.textContent = 'Registration successful! You can now log in.';
+        } else {
+          messageDiv.style.color = 'red';
+          messageDiv.textContent = result.message || 'Registration failed';
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        document.getElementById('message').textContent = 'An error occurred.';
+      }
+    });
+  </script>
+</body>
+</html>

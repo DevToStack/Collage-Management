@@ -24,7 +24,7 @@ app.use("/api/common",commonRoutes);
 app.use("/api/student",studentRoutes);
 app.use("/api/teacher",teacherRoutes);
 app.use('/api/auth',registerRoutes);
-app.use('/api/login',loginRoutes);
+app.use('/api/auth',loginRoutes);
 
 // Fallback for unmatched routes
 app.use((req, res) => {

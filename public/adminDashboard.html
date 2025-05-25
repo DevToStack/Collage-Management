@@ -456,7 +456,7 @@
         // Load user profile - Fixed version
         async function loadUserProfile() {
             try {
-                const user = await fetchData('/login/profile');
+                const user = await fetchData('/auth/profile');
                 currentUser = user;
                 localStorage.setItem('currentUser', JSON.stringify(user));
                 
@@ -1035,7 +1035,7 @@
             };
             
             try {
-                const updatedUser = await fetchData('/admin/profile', 'PUT', profileData);
+                const updatedUser = await fetchData('/auth/profile', 'PUT', profileData);
                 currentUser = updatedUser;
                 localStorage.setItem('currentUser', JSON.stringify(updatedUser));
                 

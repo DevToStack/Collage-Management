@@ -28,14 +28,6 @@ async function fetchData(endpoint, method = 'GET', body = null, requiresAuth = f
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
-        // Handle unauthorized (401)
-        if (response.status === 401) {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-            throw new Error('Session expired. Please login again.');
-        }
-
         // Handle non-OK responses
         if (!response.ok) {
             const contentType = response.headers.get('Content-Type');
@@ -77,7 +69,7 @@ if (multiStepForm) {
         }
 
         try {
-            const result = await fetchData('/auth/register', 'POST', data);
+            const result = await fetchData('/auth/register/college', 'POST', data);
 
             if (result.token && result.user) {
                 localStorage.setItem('authToken', result.token);
@@ -99,55 +91,86 @@ if (multiStepForm) {
         }
     });
 }
+document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries());
 
-// Login Handler
-const loginForm = document.getElementById('loginForm');
-if (loginForm) {
-    loginForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const formData = new FormData(loginForm);
-        const data = Object.fromEntries(formData.entries());
+    try {
+        const result = await fetchData('/auth/login', 'POST', data);
 
-        try {
-            const result = await fetchData('/login/auth', 'POST', data);
+        if (result.token && result.user) {
+            // ✅ Save to localStorage
+            localStorage.setItem('authToken', result.token);
+            localStorage.setItem('currentUser', JSON.stringify(result.user));
 
-            if (result.token && result.user) {
-                localStorage.setItem('authToken', result.token);
-                localStorage.setItem('currentUser', JSON.stringify(result.user));
+            // ✅ Retrieve after setting
+            const token = result.token;
+            const currentUser = result.user;
 
-                if (result.user.role === 'admin' || result.user.role === 'superadmin') {
-                    window.location.href = 'adminDashboard.html';
-                } else {
-                    window.location.href = 'userDashboard.html';
+            // ✅ Redirect based on role
+            if (token && (window.location.pathname.includes('login.html') || 
+                  window.location.pathname.includes('register.html'))) {
+                switch (currentUser?.role) {
+                    case 'admin':
+                    case 'superadmin':
+                        window.location.href = 'adminDashboard.html';
+                        break;
+                    case 'teacher':
+                        window.location.href = 'teacherDashboard.html';
+                        break;
+                    case 'student':
+                        window.location.href = 'studentDashboard.html';
+                        break;
+                    default:
+                        logout(); // fallback
                 }
-            } else {
-                throw new Error(result.message || "Invalid server response");
             }
-        } catch (error) {
-            console.error('Login failed:', error);
-            alert("Login failed. " + (error.message || "Invalid credentials"));
+        } else {
+            alert(result.message || 'Login failed. Please try again.');
         }
-    });
-}
+
+    } catch (err) {
+        alert(err.message || 'Login failed');
+        console.error('Login failed:', err);
+    }
+});
+
+
 
 // Check auth on page load
 function checkAuth() {
     const token = localStorage.getItem('authToken');
     const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-    if (!token && window.location.pathname.includes('adminDashboard.html')) {
+    const protectedPages = ['adminDashboard.html', 'teacherDashboard.html', 'studentDashboard.html'];
+
+    // Redirect to login if on a protected page and not authenticated
+    if (!token && protectedPages.some(page => window.location.pathname.includes(page))) {
         window.location.href = 'login.html';
+        return;
     }
 
+    // Redirect to appropriate dashboard if already logged in and on login/register page
     if (token && (window.location.pathname.includes('login.html') || 
                   window.location.pathname.includes('register.html'))) {
-        if (currentUser?.role === 'admin' || currentUser?.role === 'superadmin') {
-            window.location.href = 'adminDashboard.html';
-        } else {
-            window.location.href = 'userDashboard.html';
+        switch (currentUser?.role) {
+            case 'admin':
+            case 'superadmin':
+                window.location.href = 'adminDashboard.html';
+                break;
+            case 'teacher':
+                window.location.href = 'teacherDashboard.html';
+                break;
+            case 'student':
+                window.location.href = 'studentDashboard.html';
+                break;
+            default:
+                
         }
     }
 }
+
 
 // Logout handler
 function logout() {

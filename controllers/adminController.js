@@ -3,7 +3,7 @@ const { getDB } = require('../database');
 exports.getProfile = async (req, res) => {
   try {
     const db = getDB();
-
+    console.log(req.user)
     const [rows] = await db.query(
       'SELECT user_id, full_name, email, role, college_code FROM users WHERE user_id = ?', 
       [req.user.user_id] // Changed to user_id to match your schema
